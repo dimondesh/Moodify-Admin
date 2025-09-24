@@ -1,3 +1,4 @@
+// moodify-admin-frontend/src/pages/AdminPage/AddSongDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import toast from "react-hot-toast";
 import { useMusicStore } from "../../stores/useMusicStore";
@@ -66,17 +67,14 @@ const AddSongDialog = () => {
   });
 
   const [files, setFiles] = useState<{
-    instrumentalFile: File | null;
-    vocalsFile: File | null;
+    audioFile: File | null; // MODIFIED
     imageFile: File | null;
   }>({
-    instrumentalFile: null,
-    vocalsFile: null,
+    audioFile: null, // MODIFIED
     imageFile: null,
   });
 
-  const instrumentalInputRef = useRef<HTMLInputElement>(null);
-  const vocalsInputRef = useRef<HTMLInputElement>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null); // MODIFIED
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -92,8 +90,9 @@ const AddSongDialog = () => {
     setIsLoading(true);
 
     try {
-      if (!files.instrumentalFile) {
-        return toast.error("Please upload instrumental audio file.");
+      if (!files.audioFile) {
+        // MODIFIED
+        return toast.error("Please upload an audio file.");
       }
       const isAlbumSelected = newSong.album && newSong.album !== "none";
       if (!isAlbumSelected && !files.imageFile) {
@@ -115,10 +114,7 @@ const AddSongDialog = () => {
       if (newSong.lyrics) {
         formData.append("lyrics", newSong.lyrics);
       }
-      formData.append("instrumentalFile", files.instrumentalFile);
-      if (files.vocalsFile) {
-        formData.append("vocalsFile", files.vocalsFile);
-      }
+      formData.append("audioFile", files.audioFile); // MODIFIED
       if (files.imageFile) {
         formData.append("imageFile", files.imageFile);
       }
@@ -136,8 +132,7 @@ const AddSongDialog = () => {
       });
       setSelectedArtistIds([]);
       setFiles({
-        instrumentalFile: null,
-        vocalsFile: null,
+        audioFile: null, // MODIFIED
         imageFile: null,
       });
       setSongDialogOpen(false);
@@ -157,13 +152,13 @@ const AddSongDialog = () => {
   return (
     <Dialog open={songDialogOpen} onOpenChange={setSongDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-emerald-500 hover:bg-emerald-600 text-black">
+        <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
           <Plus className="mr-2 h-4 w-4" />
           {t("admin.songs.add")}
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="bg-zinc-900 border-zinc-700 max-h-[80vh] overflow-auto text-zinc-200 no-scrollbar">
+      <DialogContent className="bg-[#1a1a1a] border-[#2a2a2a] max-h-[80vh] overflow-auto text-white no-scrollbar">
         <DialogHeader>
           <DialogTitle className="text-white">
             {t("admin.songs.addDialogTitle")}
@@ -223,73 +218,33 @@ const AddSongDialog = () => {
             </div>
           </div>
 
+          {/* MODIFIED: Single audio file input */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">
-              {t("admin.songs.instrumentalRequired")}
+              Аудиофайл (Обязательно)
             </label>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                onClick={() => instrumentalInputRef.current?.click()}
+                onClick={() => audioInputRef.current?.click()}
                 className="w-full text-zinc-200"
               >
-                {files.instrumentalFile
-                  ? files.instrumentalFile.name.slice(0, 20)
-                  : t("admin.songs.chooseInstrumental")}
+                {files.audioFile
+                  ? files.audioFile.name.slice(0, 30)
+                  : "Выберите аудиофайл"}
               </Button>
               <input
                 type="file"
                 accept="audio/*"
-                ref={instrumentalInputRef}
+                ref={audioInputRef}
                 hidden
                 onChange={(e) =>
                   setFiles((prev) => ({
                     ...prev,
-                    instrumentalFile: e.target.files![0],
+                    audioFile: e.target.files![0],
                   }))
                 }
               />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-white">
-              {t("admin.songs.vocalsOptional")}
-            </label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => vocalsInputRef.current?.click()}
-                className="w-full text-zinc-200"
-              >
-                {files.vocalsFile
-                  ? files.vocalsFile.name.slice(0, 20)
-                  : t("admin.songs.chooseVocals")}
-              </Button>
-              <input
-                type="file"
-                accept="audio/*"
-                ref={vocalsInputRef}
-                hidden
-                onChange={(e) =>
-                  setFiles((prev) => ({
-                    ...prev,
-                    vocalsFile: e.target.files![0],
-                  }))
-                }
-              />
-              {files.vocalsFile && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() =>
-                    setFiles((prev) => ({ ...prev, vocalsFile: null }))
-                  }
-                  className="text-red-500 hover:bg-red-900"
-                >
-                  X
-                </Button>
-              )}
             </div>
           </div>
 
@@ -429,13 +384,12 @@ const AddSongDialog = () => {
                 album: "",
                 releaseYear: new Date().getFullYear(),
                 lyrics: "",
-                genreIds: [], // <-- Инициализация
+                genreIds: [],
                 moodIds: [],
               });
               setSelectedArtistIds([]);
               setFiles({
-                instrumentalFile: null,
-                vocalsFile: null,
+                audioFile: null,
                 imageFile: null,
               });
             }}
@@ -450,7 +404,7 @@ const AddSongDialog = () => {
               isLoading ||
               !newSong.title ||
               selectedArtistIds.length === 0 ||
-              !files.instrumentalFile ||
+              !files.audioFile ||
               (!isAlbumSelected && !files.imageFile)
             }
           >

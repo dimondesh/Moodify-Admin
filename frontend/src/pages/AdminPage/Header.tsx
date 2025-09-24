@@ -44,23 +44,18 @@ const Header = () => {
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-3 mb-8">
-        <Link to="/" className="rounded-lg hidden sm:block">
+    <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-[#0f0f0f]/95 backdrop-blur-md z-20 border-b border-[#2a2a2a]">
+      <div className="flex items-center gap-4">
+        <Link to="/" className="hover-brightness">
           <img
             src="/Moodify.png"
             alt="Moodify Logo - Go to Home"
-            className="size-10 text-black cursor-pointer"
+            className="size-8 text-white cursor-pointer"
           />
         </Link>
-        <Link to="/" className="sm:hidden">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <HomeIcon className="h-5 w-5" />
-          </Button>
-        </Link>
         <div>
-          <h1 className="text-3xl font-bold">{t("admin.title")}</h1>
-          <p className="text-zinc-400 mt-1">{t("admin.description")}</p>
+          <h1 className="text-xl font-bold text-white">{t("admin.title")}</h1>
+          <p className="text-gray-400 text-sm">{t("admin.description")}</p>
         </div>
       </div>
 
@@ -70,7 +65,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="relative h-8 w-8 rounded-full"
+              className="relative h-8 w-8 rounded-full hover:bg-[#2a2a2a]"
             >
               <img
                 src={user.photoURL || "/Moodify.png"}
@@ -80,18 +75,18 @@ const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-48 bg-zinc-800 border-zinc-700 text-white p-1"
+            className="w-48 bg-[#1a1a1a] border-[#2a2a2a] text-white p-1"
             align="end"
           >
             {user.displayName && (
-              <DropdownMenuItem className="text-sm font-semibold cursor-default text-zinc-200 p-2 opacity-100 hover:bg-zinc-700">
+              <DropdownMenuItem className="text-sm font-semibold cursor-default text-white p-2 opacity-100 hover:bg-[#2a2a2a]">
                 {user.displayName}
               </DropdownMenuItem>
             )}
             {isAdmin && (
               <DropdownMenuItem
                 asChild
-                className="p-2 cursor-pointer hover:bg-zinc-700"
+                className="p-2 cursor-pointer hover:bg-[#2a2a2a]"
               >
                 <Link to="/admin">
                   <LayoutDashboardIcon className="w-4 h-4 mr-2" />
@@ -101,7 +96,7 @@ const Header = () => {
             )}
             <DropdownMenuItem
               onClick={handleLogout}
-              className="text-red-400 p-2 cursor-pointer hover:bg-zinc-700"
+              className="text-red-400 p-2 cursor-pointer hover:bg-[#2a2a2a]"
             >
               <LogOut className="w-4 h-4 mr-2" />
               {t("topbar.logout")}

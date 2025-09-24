@@ -71,7 +71,7 @@ const SongsTable = memo(() => {
   if (isLoading && paginatedSongs.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
       </div>
     );
   }
@@ -85,15 +85,21 @@ const SongsTable = memo(() => {
   }
 
   return (
-    <>
+    <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="border-zinc-700/50">
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead>{t("admin.songs.tableTitle")}</TableHead>
-            <TableHead>{t("admin.songs.tableArtist")}</TableHead>
-            <TableHead>{t("admin.songs.tableReleaseDate")}</TableHead>
-            <TableHead className="text-right">
+          <TableRow className="border-[#2a2a2a] hover:bg-[#2a2a2a]">
+            <TableHead className="w-[50px] text-gray-300"></TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.songs.tableTitle")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.songs.tableArtist")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.songs.tableReleaseDate")}
+            </TableHead>
+            <TableHead className="text-right text-gray-300">
               {t("admin.songs.tableActions")}
             </TableHead>
           </TableRow>
@@ -101,7 +107,7 @@ const SongsTable = memo(() => {
         <TableBody>
           {paginatedSongs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center text-zinc-400">
+              <TableCell colSpan={5} className="h-24 text-center text-gray-400">
                 {t("admin.songs.tableNoSongs")}
               </TableCell>
             </TableRow>
@@ -109,7 +115,7 @@ const SongsTable = memo(() => {
             paginatedSongs.map((song) => (
               <TableRow
                 key={song._id}
-                className="hover:bg-zinc-800/50 border-zinc-700/50"
+                className="hover:bg-[#2a2a2a] border-[#2a2a2a]"
               >
                 <TableCell>
                   <img
@@ -118,13 +124,13 @@ const SongsTable = memo(() => {
                     className="size-10 rounded object-cover"
                   />
                 </TableCell>
-                <TableCell className="font-medium text-zinc-200">
+                <TableCell className="font-medium text-white">
                   {song.title}
                 </TableCell>
-                <TableCell className="text-zinc-400">
+                <TableCell className="text-gray-400">
                   {getArtistNames(song.artist)}
                 </TableCell>
-                <TableCell className="text-zinc-400">
+                <TableCell className="text-gray-400">
                   <span className="inline-flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     {song.createdAt.split("T")[0]}
@@ -153,7 +159,7 @@ const SongsTable = memo(() => {
         totalPages={songsTotalPages}
         onPageChange={handlePageChange}
       />
-    </>
+    </div>
   );
 });
 export default SongsTable;

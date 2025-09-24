@@ -66,16 +66,24 @@ const AlbumsTable = () => {
   };
 
   return (
-    <>
+    <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="hover:bg-zinc-800/50 border-zinc-700/50">
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead>{t("admin.albums.tableTitle")}</TableHead>
-            <TableHead>{t("admin.albums.tableArtists")}</TableHead>
-            <TableHead>{t("admin.albums.tableReleaseYear")}</TableHead>
-            <TableHead>{t("admin.albums.tableSongs")}</TableHead>
-            <TableHead className="text-right">
+          <TableRow className="border-[#2a2a2a] hover:bg-[#2a2a2a]">
+            <TableHead className="w-[50px] text-gray-300"></TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.albums.tableTitle")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.albums.tableArtists")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.albums.tableReleaseYear")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.albums.tableSongs")}
+            </TableHead>
+            <TableHead className="text-right text-gray-300">
               {t("admin.albums.tableActions")}
             </TableHead>
           </TableRow>
@@ -84,7 +92,7 @@ const AlbumsTable = () => {
           {paginatedAlbums.map((album) => (
             <TableRow
               key={album._id}
-              className="hover:bg-zinc-800/50 border-zinc-700/50"
+              className="hover:bg-[#2a2a2a] border-[#2a2a2a]"
             >
               <TableCell>
                 <img
@@ -96,17 +104,17 @@ const AlbumsTable = () => {
               <TableCell className="font-medium text-white">
                 {album.title}
               </TableCell>
-              <TableCell className="text-zinc-400">
+              <TableCell className="text-gray-400">
                 {getArtistNames(album.artist)}
               </TableCell>
-              <TableCell className="text-zinc-400">
+              <TableCell className="text-gray-400">
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {album.releaseYear}
                 </span>
               </TableCell>
               <TableCell>
-                <span className="inline-flex items-center gap-1 text-zinc-400">
+                <span className="inline-flex items-center gap-1 text-gray-400">
                   <Music className="h-4 w-4" />
                   {album.songs.length}{" "}
                   {album.songs.length === 1
@@ -136,7 +144,7 @@ const AlbumsTable = () => {
         totalPages={albumsTotalPages}
         onPageChange={handlePageChange}
       />
-    </>
+    </div>
   );
 };
 export default AlbumsTable;

@@ -15,23 +15,21 @@ import { useTranslation } from "react-i18next";
 const ArtistsTabContent = () => {
   const { t } = useTranslation();
   return (
-    <Card className="bg-zinc-800/50 border-zinc-700/50">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Users2 className="h-5 w-5 text-orange-500" />
-              {t("admin.artists.title")}
-            </CardTitle>
-            <CardDescription>{t("admin.artists.description")}</CardDescription>
-          </div>
-          <AddArtistDialog />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+            <Users2 className="h-5 w-5 text-orange-500" />
+            {t("admin.artists.title")}
+          </h2>
+          <p className="text-gray-400 text-sm mt-1">
+            {t("admin.artists.description")}
+          </p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <ArtistsTable />
-      </CardContent>
-    </Card>
+        <AddArtistDialog />
+      </div>
+      <ArtistsTable />
+    </div>
   );
 };
 

@@ -75,14 +75,14 @@ const AddArtistDialog = () => {
   return (
     <Dialog open={artistDialogOpen} onOpenChange={setArtistDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+        <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
           <Plus className="mr-2 h-4 w-4" />
           {t("admin.artists.add")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+      <DialogContent className="bg-[#1a1a1a] border-[#2a2a2a] text-white">
         <DialogHeader>
-          <DialogTitle className="text-zinc-200">
+          <DialogTitle className="text-white">
             {t("admin.artists.addDialogTitle")}
           </DialogTitle>
           <DialogDescription>
@@ -179,7 +179,7 @@ const AddArtistDialog = () => {
           </Button>
           <Button
             onClick={handleSubmit}
-            className="bg-orange-500 hover:bg-orange-600 text-zinc-200"
+            className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white"
             disabled={isLoading || !imageFile || !newArtist.name}
           >
             {isLoading ? t("admin.common.creating") : t("admin.artists.add")}

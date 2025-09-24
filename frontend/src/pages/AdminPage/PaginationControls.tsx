@@ -21,8 +21,8 @@ const PaginationControls = ({
   }
 
   return (
-    <div className="flex items-center justify-end space-x-2 py-4">
-      <span className="text-sm text-zinc-400">
+    <div className="flex items-center justify-end space-x-2 py-4 px-4 bg-[#1a1a1a] border-t border-[#2a2a2a]">
+      <span className="text-sm text-gray-400">
         {t("pagination.page", { currentPage, totalPages })}
       </span>
       <Button
@@ -30,6 +30,7 @@ const PaginationControls = ({
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
+        className="bg-[#2a2a2a] border-[#2a2a2a] text-white hover:bg-[#3a3a3a] disabled:opacity-50"
       >
         <ChevronLeft className="h-4 w-4" />
         {t("pagination.previous")}
@@ -39,6 +40,7 @@ const PaginationControls = ({
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalPages}
+        className="bg-[#2a2a2a] border-[#2a2a2a] text-white hover:bg-[#3a3a3a] disabled:opacity-50"
       >
         {t("pagination.next")}
         <ChevronRight className="h-4 w-4" />

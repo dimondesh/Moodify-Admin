@@ -92,14 +92,14 @@ const AddAlbumDialog = () => {
   return (
     <Dialog open={albumDialogOpen} onOpenChange={setAlbumDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-violet-500 hover:bg-violet-600 text-white">
+        <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
           <Plus className="mr-0 md:mr-2 h-4 w-4" />
           <p className="hidden md:inline"> {t("admin.albums.add")}</p>{" "}
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
+      <DialogContent className="bg-[#1a1a1a] border-[#2a2a2a] text-white">
         <DialogHeader>
-          <DialogTitle className="text-zinc-200">
+          <DialogTitle className="text-white">
             {t("admin.albums.addDialogTitle")}
           </DialogTitle>
           <DialogDescription>
@@ -212,7 +212,7 @@ const AddAlbumDialog = () => {
           </Button>
           <Button
             onClick={handleSubmit}
-            className="bg-violet-500 hover:bg-violet-600 text-zinc-200"
+            className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white"
             disabled={
               isLoading ||
               !imageFile ||

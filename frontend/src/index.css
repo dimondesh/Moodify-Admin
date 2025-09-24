@@ -198,5 +198,21 @@
 }
 
 body{
-  background-color: #18181B;
+  background-color: #0f0f0f;
+}
+
+.hover-brightness {
+  transition: filter 0.2s ease-in-out;
+}
+
+.hover-brightness:hover {
+  filter: brightness(1.1);
+}
+
+.hover-scale {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
 }
