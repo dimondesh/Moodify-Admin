@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import SignInOAuthButton from "../../components/ui/SignInOAuthButton";
-import { LayoutDashboardIcon, LogOut, HomeIcon } from "lucide-react";
+import { LayoutDashboardIcon, LogOut} from "lucide-react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useTranslation } from "react-i18next";
 

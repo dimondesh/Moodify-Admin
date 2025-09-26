@@ -2,13 +2,7 @@
 
 import { Users2 } from "lucide-react";
 import AddArtistDialog from "./AddArtistDialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+
 import ArtistsTable from "./ArtistsTable";
 import { useTranslation } from "react-i18next";
 

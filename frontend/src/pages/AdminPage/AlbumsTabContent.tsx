@@ -3,13 +3,7 @@
 import { Library } from "lucide-react";
 import AddAlbumDialog from "./AddAlbumDialog";
 import AddAlbumFromSpotifyDialog from "./AddAlbumFromSpotifyDialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+
 import AlbumsTable from "./AlbumsTable";
 import { useTranslation } from "react-i18next";
 

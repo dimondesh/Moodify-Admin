@@ -1,13 +1,7 @@
 // frontend/src/pages/AdminPage/SongsTabContent.tsx
 
 import { Music } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
+
 import SongsTable from "./SongsTable";
 import AddSongDialog from "./AddSongDialog";
 import { useTranslation } from "react-i18next";
