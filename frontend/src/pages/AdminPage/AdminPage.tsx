@@ -1,6 +1,6 @@
 // frontend/src/pages/AdminPage/AdminPage.tsx
 
-import { Album, Home, Music, Users2 } from "lucide-react";
+import { Activity, Album, Home, Music, Users2 } from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -18,6 +18,7 @@ import { useMusicStore } from "../../stores/useMusicStore";
 import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import StatusTabContent from "./StatusTabContent";
 
 const AdminPage = () => {
   const { t } = useTranslation();
@@ -49,8 +50,15 @@ const AdminPage = () => {
       <div className="flex-1 overflow-y-auto hide-scrollbar">
         <div className="p-4 sm:p-6">
           <DashboardStats />
-          <Tabs defaultValue="songs" className="space-y-6 mt-6">
+          <Tabs defaultValue="status" className="space-y-6 mt-6">
             <TabsList className="p-1 bg-[#2a2a2a] rounded-lg">
+              <TabsTrigger
+                value="status"
+                className="data-[state=active]:bg-[#8b5cf6] data-[state=active]:text-white text-gray-300 hover:text-white"
+              >
+                <Activity className="mr-2 size-4" />
+                {t("admin.tabs.status")}
+              </TabsTrigger>
               <TabsTrigger
                 value="songs"
                 className="data-[state=active]:bg-[#8b5cf6] data-[state=active]:text-white text-gray-300 hover:text-white"
@@ -73,6 +81,9 @@ const AdminPage = () => {
                 {t("admin.tabs.artists")}
               </TabsTrigger>
             </TabsList>
+            <TabsContent value="status">
+              <StatusTabContent />
+            </TabsContent>
             <TabsContent value="songs">
               <SongsTabContent />
             </TabsContent>

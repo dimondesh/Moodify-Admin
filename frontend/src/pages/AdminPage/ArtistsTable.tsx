@@ -51,14 +51,18 @@ const ArtistsTable = () => {
   };
 
   return (
-    <>
+    <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-zinc-800/50 border-zinc-700/50">
-            <TableHead className="w-[50px]"></TableHead>
-            <TableHead>{t("admin.artists.tableName")}</TableHead>
-            <TableHead>{t("admin.artists.tableAlbums")}</TableHead>
-            <TableHead className="text-right">
+            <TableHead className="w-[50px] text-gray-300"></TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.artists.tableName")}
+            </TableHead>
+            <TableHead className="text-gray-300">
+              {t("admin.artists.tableAlbums")}
+            </TableHead>
+            <TableHead className="text-right text-gray-300">
               {t("admin.songs.tableActions")}
             </TableHead>
           </TableRow>
@@ -120,7 +124,7 @@ const ArtistsTable = () => {
         isOpen={isEditDialogOpen}
         onClose={handleCloseEditDialog}
       />
-    </>
+    </div>
   );
 };
 

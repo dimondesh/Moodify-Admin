@@ -114,8 +114,18 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
         vocalsFile: null,
         imageFile: null,
       });
-      setSelectedGenreIds(song.genres.map((genre: Genre) => genre._id));
-      setSelectedMoodIds(song.moods.map((mood: Mood) => mood._id));
+      setSelectedGenreIds(
+        song.genres.map((genre: Genre | string) =>
+          typeof genre === "object" && genre !== null
+            ? genre._id
+            : String(genre)
+        )
+      );
+      setSelectedMoodIds(
+        song.moods.map((mood: Mood | string) =>
+          typeof mood === "object" && mood !== null ? mood._id : String(mood)
+        )
+      );
       setPreviewImageUrl(song.imageUrl);
       setPreviewInstrumentalUrl(song.instrumentalUrl);
       setPreviewVocalsUrl(song.vocalsUrl || null);
@@ -237,7 +247,7 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
               type="file"
               accept="image/*"
               ref={imageInputRef}
-              hidden
+              className="hidden"
               onChange={(e) => handleFileSelect(e, "image")}
             />
             <div className="text-center">
@@ -245,7 +255,7 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
                 <img
                   src={previewImageUrl}
                   alt="Song Artwork Preview"
-                  className="w-24 h-24 object-cover rounded-md mb-3"
+                  className="w-24 h-24 object-cover rounded-md mb-3 mx-auto"
                 />
               )}
               <div className="p-3 bg-zinc-800 rounded-full inline-block mb-2">
@@ -267,7 +277,6 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
               </Button>
             </div>
           </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">
               {t("admin.songs.instrumentalRequired")}

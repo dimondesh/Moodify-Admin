@@ -30,7 +30,13 @@
     "settings": "Settings",
     "adminDashboard": "Admin Dashboard",
     "logout": "Log Out",
-    "login": "Log In"
+    "login": "Log In",
+    "language": "Language",
+    "languages": {
+      "en": "English",
+      "uk": "Українська",
+      "ru": "Русский"
+    }
   },
   "player": {
     "noSong": "No song playing",
@@ -688,6 +694,19 @@
     "download": "Download \"{{itemTitle}}\" for offline playback"
   },
   "admin": {
+    "status": {
+      "title": "Status",
+      "description": "Check the health of services and view key statistics.",
+      "backendStatus": "Main Backend",
+      "analysisServiceStatus": "Audio Analysis Service",
+      "wakeUpButton": "Check / Wake Up",
+      "wakeUpDescription": "Services on Render may 'sleep' when inactive.",
+      "online": "Online",
+      "offline": "Offline",
+      "checking": "Checking...",
+      "idle": "Idle",
+      "dbStatsTitle": "Database Statistics"
+    },
     "unauthorized": "Unauthorized",
     "backToHome": "Back to Home",
     "title": "Music Manager",
@@ -695,7 +714,8 @@
     "tabs": {
       "songs": "Songs",
       "albums": "Albums",
-      "artists": "Artists"
+      "artists": "Artists",
+      "status": "Status "
     },
     "stats": {
       "totalSongs": "Total Songs",
@@ -773,11 +793,11 @@
       "tableReleaseYear": "Release Year",
       "tableSongs": "Songs",
       "tableActions": "Actions",
-       "share": "Share",
-    "addToLiked": "Add to Liked Songs",
-    "removeFromLiked": "Remove from Liked",
-    "addToPlaylist": "Add to playlist",
-    "goToArtist": "Go to artist"
+      "share": "Share",
+      "addToLiked": "Add to Liked Songs",
+      "removeFromLiked": "Remove from Liked",
+      "addToPlaylist": "Add to playlist",
+      "goToArtist": "Go to artist"
     },
     "artists": {
       "title": "Artists Library",

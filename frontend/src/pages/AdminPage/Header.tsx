@@ -10,19 +10,28 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "../../components/ui/dropdown-menu";
 import SignInOAuthButton from "../../components/ui/SignInOAuthButton";
-import { LayoutDashboardIcon, LogOut} from "lucide-react";
-import { useAuthStore } from "../../stores/useAuthStore";
+import { LogOut, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const Header = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState<null | {
     displayName: string | null;
     photoURL: string | null;
   }>(null);
-  const { isAdmin } = useAuthStore();
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem("i18nextLng"); 
+    if (savedLang && savedLang !== i18n.language) {
+      i18n.changeLanguage(savedLang);
+    }
+  }, [i18n]); 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -39,18 +48,30 @@ const Header = () => {
     return () => unsubscribe();
   }, []);
 
+  const availableLanguages = [
+    { code: "en", name: t("topbar.languages.en"), flag: "🇬🇧" },
+    { code: "uk", name: t("topbar.languages.uk"), flag: "🇺🇦" },
+    { code: "ru", name: t("topbar.languages.ru"), flag: "🇷🇺" },
+  ];
+
+  const handleChangeLanguage = (langCode: string) => {
+    i18n.changeLanguage(langCode);
+    localStorage.setItem("i18nextLng", langCode);
+  };
+
   const handleLogout = async () => {
     await signOut(auth);
   };
 
   return (
     <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-[#0f0f0f]/95 backdrop-blur-md z-20 border-b border-[#2a2a2a]">
+      {/* ... остальной JSX код без изменений ... */}
       <div className="flex items-center gap-4">
         <Link to="/" className="hover-brightness">
           <img
-            src="/Moodify.png"
+            src="/Moodify-transparent.svg"
             alt="Moodify Logo - Go to Home"
-            className="size-8 text-white cursor-pointer"
+            className="size-10 text-white cursor-pointer"
           />
         </Link>
         <div>
@@ -83,20 +104,37 @@ const Header = () => {
                 {user.displayName}
               </DropdownMenuItem>
             )}
-            {isAdmin && (
-              <DropdownMenuItem
-                asChild
-                className="p-2 cursor-pointer hover:bg-[#2a2a2a]"
-              >
-                <Link to="/admin">
-                  <LayoutDashboardIcon className="w-4 h-4 mr-2" />
-                  {t("topbar.adminDashboard")}
-                </Link>
-              </DropdownMenuItem>
-            )}
+
+            <DropdownMenuSeparator className="bg-[#2a2a2a]" />
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="p-2 cursor-pointer hover:bg-[#2a2a2a]">
+                <Languages className="w-4 h-4 mr-2" />
+                <span>{t("topbar.language")}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="bg-[#1a1a1a] border-[#2a2a2a] text-white p-1">
+                {availableLanguages.map((lang) => {
+                  const isSelected = i18n.language.startsWith(lang.code);
+                  return (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => handleChangeLanguage(lang.code)}
+                      className={`p-2 cursor-pointer hover:bg-[#2a2a2a] ${
+                        isSelected ? "text-violet-500" : ""
+                      }`}
+                    >
+                      <span>{`${lang.flag} ${lang.name}`}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+
+            <DropdownMenuSeparator className="bg-[#2a2a2a]" />
+
             <DropdownMenuItem
               onClick={handleLogout}
-              className="text-red-400 p-2 cursor-pointer hover:bg-[#2a2a2a]"
+              className="text-red-400 p-2 cursor-pointer hover:bg-[#2a2a2a] focus:bg-red-500/20 focus:text-red-400"
             >
               <LogOut className="w-4 h-4 mr-2" />
               {t("topbar.logout")}
