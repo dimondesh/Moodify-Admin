@@ -696,7 +696,7 @@
   "admin": {
     "status": {
       "title": "Status",
-      "description": "Check the health of services and view key statistics.",
+      "description": "Check the health of services.",
       "backendStatus": "Main Backend",
       "analysisServiceStatus": "Audio Analysis Service",
       "wakeUpButton": "Check / Wake Up",
