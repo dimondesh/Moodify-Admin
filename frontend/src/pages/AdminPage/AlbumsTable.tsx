@@ -16,8 +16,10 @@ import { Artist } from "../../types";
 import EditAlbumDialog from "./EditAlbumDialog";
 import { useTranslation } from "react-i18next";
 import PaginationControls from "./PaginationControls";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const AlbumsTable = () => {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
   const { t } = useTranslation();
   const {
     paginatedAlbums,
@@ -74,13 +76,13 @@ const AlbumsTable = () => {
             <TableHead className="text-gray-300">
               {t("admin.albums.tableTitle")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.albums.tableArtists")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.albums.tableReleaseYear")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.albums.tableSongs")}
             </TableHead>
             <TableHead className="text-right text-gray-300">
@@ -104,16 +106,20 @@ const AlbumsTable = () => {
               <TableCell className="font-medium text-white">
                 {album.title}
               </TableCell>
-              <TableCell className="text-gray-400">
+              <TableCell
+                className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+              >
                 {getArtistNames(album.artist)}
               </TableCell>
-              <TableCell className="text-gray-400">
+              <TableCell
+                className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+              >
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
                   {album.releaseYear}
                 </span>
               </TableCell>
-              <TableCell>
+              <TableCell className={` ${isMobile ? "hidden" : ""}`}>
                 <span className="inline-flex items-center gap-1 text-gray-400">
                   <Music className="h-4 w-4" />
                   {album.songs.length}{" "}
