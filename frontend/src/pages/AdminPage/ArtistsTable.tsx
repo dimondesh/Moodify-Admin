@@ -16,8 +16,11 @@ import { Artist } from "../../types";
 import EditArtistDialog from "./EditArtistDialog";
 import { useTranslation } from "react-i18next";
 import PaginationControls from "./PaginationControls";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const ArtistsTable = () => {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
+
   const { t } = useTranslation();
   const {
     paginatedArtists,
@@ -59,7 +62,7 @@ const ArtistsTable = () => {
             <TableHead className="text-gray-300">
               {t("admin.artists.tableName")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.artists.tableAlbums")}
             </TableHead>
             <TableHead className="text-right text-gray-300">
@@ -81,7 +84,7 @@ const ArtistsTable = () => {
                 />
               </TableCell>
               <TableCell className="font-medium">{artist.name}</TableCell>
-              <TableCell>
+              <TableCell className={` ${isMobile ? "hidden" : ""}`}>
                 <span className="inline-flex items-center gap-1 text-zinc-400">
                   <Music className="h-4 w-4" />
                   {artist.albums.length}{" "}

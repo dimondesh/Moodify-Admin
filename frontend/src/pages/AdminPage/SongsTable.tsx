@@ -17,8 +17,11 @@ import { Calendar, Trash2 } from "lucide-react";
 import { Artist } from "@/types";
 import { useTranslation } from "react-i18next";
 import PaginationControls from "./PaginationControls";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const SongsTable = memo(() => {
+  const isMobile = useMediaQuery("(max-width: 1024px)");
+
   const { t } = useTranslation();
   const {
     paginatedSongs,
@@ -93,10 +96,10 @@ const SongsTable = memo(() => {
             <TableHead className="text-gray-300">
               {t("admin.songs.tableTitle")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.songs.tableArtist")}
             </TableHead>
-            <TableHead className="text-gray-300">
+            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.songs.tableReleaseDate")}
             </TableHead>
             <TableHead className="text-right text-gray-300">
@@ -127,10 +130,14 @@ const SongsTable = memo(() => {
                 <TableCell className="font-medium text-white">
                   {song.title}
                 </TableCell>
-                <TableCell className="text-gray-400">
+                <TableCell
+                  className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+                >
                   {getArtistNames(song.artist)}
                 </TableCell>
-                <TableCell className="text-gray-400">
+                <TableCell
+                  className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+                >
                   <span className="inline-flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     {song.createdAt.split("T")[0]}
