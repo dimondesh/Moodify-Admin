@@ -27,6 +27,7 @@ import { ScrollArea } from "../../components/ui/scroll-area";
 import { MultiSelect } from "../../components/ui/multi-select";
 import { Textarea } from "../../components/ui/textarea";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 interface NewSong {
   title: string;
@@ -39,6 +40,8 @@ interface NewSong {
 }
 
 const AddSongDialog = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const { t } = useTranslation();
   const {
     albums,
@@ -153,8 +156,8 @@ const AddSongDialog = () => {
     <Dialog open={songDialogOpen} onOpenChange={setSongDialogOpen}>
       <DialogTrigger asChild>
         <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("admin.songs.add")}
+          <Plus className={`${isMobile ? "ml-2" : ""} mr-2 h-4 w-4`} />
+          {isMobile ? "" : t("admin.songs.add")}
         </Button>
       </DialogTrigger>
 

@@ -18,8 +18,11 @@ import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { useMusicStore } from "../../stores/useMusicStore";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const AddArtistDialog = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const { t } = useTranslation();
   const [artistDialogOpen, setArtistDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,8 +79,8 @@ const AddArtistDialog = () => {
     <Dialog open={artistDialogOpen} onOpenChange={setArtistDialogOpen}>
       <DialogTrigger asChild>
         <Button className="bg-[#8b5cf6] hover:bg-[#7c3aed] text-white">
-          <Plus className="mr-2 h-4 w-4" />
-          {t("admin.artists.add")}
+          <Plus className={`${isMobile ? "ml-2" : ""} mr-2 h-4 w-4`} />
+          {isMobile ? "" : t("admin.artists.add")}
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-[#1a1a1a] border-[#2a2a2a] text-white">
