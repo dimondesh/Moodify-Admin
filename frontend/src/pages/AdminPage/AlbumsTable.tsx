@@ -100,14 +100,14 @@ const AlbumsTable = () => {
                 <img
                   src={album.imageUrl}
                   alt={album.title}
-                  className="h-10 w-10 rounded-md object-cover"
+                  className="h-10 w-10 rounded-sm object-cover min-w-10"
                 />
               </TableCell>
-              <TableCell className="font-medium text-white">
+              <TableCell className="font-medium text-white max-w-40 sm:max-w-0 truncate">
                 {album.title}
               </TableCell>
               <TableCell
-                className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+                className={`text-gray-400 truncate ${isMobile ? "hidden" : ""}`}
               >
                 {getArtistNames(album.artist)}
               </TableCell>

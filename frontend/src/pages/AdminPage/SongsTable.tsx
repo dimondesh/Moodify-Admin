@@ -124,10 +124,10 @@ const SongsTable = memo(() => {
                   <img
                     src={song.imageUrl}
                     alt={song.title}
-                    className="size-10 rounded object-cover"
+                    className="size-10 rounded object-cover min-w-10"
                   />
                 </TableCell>
-                <TableCell className="font-medium text-white">
+                <TableCell className="font-medium text-white max-w-40 sm:max-w-0 truncate">
                   {song.title}
                 </TableCell>
                 <TableCell

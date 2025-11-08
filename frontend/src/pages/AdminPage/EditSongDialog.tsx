@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminPage/EditSongDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import toast from "react-hot-toast";
 import { useMusicStore } from "../../stores/useMusicStore";
@@ -14,7 +13,7 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 import { Button } from "../../components/ui/button";
-import { Pencil, Upload, XCircle } from "lucide-react";
+import { Pencil, Upload } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import {
   Select,
@@ -66,28 +65,18 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
   );
 
   const [files, setFiles] = useState<{
-    instrumentalFile: File | null;
-    vocalsFile: File | null;
+    audioFile: File | null;
     imageFile: File | null;
   }>({
-    instrumentalFile: null,
-    vocalsFile: null,
+    audioFile: null,
     imageFile: null,
   });
 
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(
     song.imageUrl
   );
-  const [previewInstrumentalUrl, setPreviewInstrumentalUrl] = useState<
-    string | null
-  >(song.instrumentalUrl);
-  const [previewVocalsUrl, setPreviewVocalsUrl] = useState<string | null>(
-    song.vocalsUrl || null
-  );
-  const [clearVocals, setClearVocals] = useState(false);
 
-  const instrumentalInputRef = useRef<HTMLInputElement>(null);
-  const vocalsInputRef = useRef<HTMLInputElement>(null);
+  const audioInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -110,8 +99,7 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
         )
       );
       setFiles({
-        instrumentalFile: null,
-        vocalsFile: null,
+        audioFile: null,
         imageFile: null,
       });
       setSelectedGenreIds(
@@ -127,34 +115,22 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
         )
       );
       setPreviewImageUrl(song.imageUrl);
-      setPreviewInstrumentalUrl(song.instrumentalUrl);
-      setPreviewVocalsUrl(song.vocalsUrl || null);
-      setClearVocals(false);
     }
   }, [dialogOpen, fetchArtists, fetchAlbums, fetchGenres, fetchMoods, song]);
 
   const handleFileSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "instrumental" | "vocals" | "image"
+    type: "audio" | "image"
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFiles((prev) => ({ ...prev, [`${type}File`]: file }));
       if (type === "image") {
+        setFiles((prev) => ({ ...prev, imageFile: file }));
         setPreviewImageUrl(URL.createObjectURL(file));
-      } else if (type === "instrumental") {
-        setPreviewInstrumentalUrl(URL.createObjectURL(file));
-      } else if (type === "vocals") {
-        setPreviewVocalsUrl(URL.createObjectURL(file));
-        setClearVocals(false);
+      } else if (type === "audio") {
+        setFiles((prev) => ({ ...prev, audioFile: file }));
       }
     }
-  };
-
-  const handleClearVocals = () => {
-    setFiles((prev) => ({ ...prev, vocalsFile: null }));
-    setPreviewVocalsUrl(null);
-    setClearVocals(true);
   };
 
   const handleSubmit = async () => {
@@ -171,9 +147,6 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
           "Please upload an image file for the single or select an album."
         );
       }
-      if (!previewInstrumentalUrl && !files.instrumentalFile) {
-        return toast.error("Please upload an instrumental audio file.");
-      }
 
       const formData = new FormData();
       formData.append("title", currentSongData.title);
@@ -188,10 +161,7 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
         formData.append("albumId", "");
       }
 
-      if (files.instrumentalFile)
-        formData.append("instrumentalFile", files.instrumentalFile);
-      if (files.vocalsFile) formData.append("vocalsFile", files.vocalsFile);
-      else if (clearVocals) formData.append("clearVocals", "true");
+      if (files.audioFile) formData.append("audioFile", files.audioFile);
       if (files.imageFile) formData.append("imageFile", files.imageFile);
 
       await axiosInstance.put(`/admin/songs/${song._id}`, formData);
@@ -279,80 +249,24 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">
-              {t("admin.songs.instrumentalRequired")}
+              Аудиофайл (Оставьте пустым, чтобы не изменять)
             </label>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                onClick={() => instrumentalInputRef.current?.click()}
+                onClick={() => audioInputRef.current?.click()}
                 className="w-full text-zinc-200"
               >
-                {files.instrumentalFile
-                  ? files.instrumentalFile.name
-                  : previewInstrumentalUrl
-                  ? t("admin.songs.changeInstrumental")
-                  : t("admin.songs.chooseInstrumental")}
+                {files.audioFile ? files.audioFile.name : "Выберите аудиофайл"}
               </Button>
               <input
                 type="file"
                 accept="audio/*"
-                ref={instrumentalInputRef}
+                ref={audioInputRef}
                 hidden
-                onChange={(e) => handleFileSelect(e, "instrumental")}
+                onChange={(e) => handleFileSelect(e, "audio")}
               />
             </div>
-            {previewInstrumentalUrl && !files.instrumentalFile && (
-              <p className="text-xs text-zinc-500">
-                {t("admin.common.currentFile")}{" "}
-                {previewInstrumentalUrl.substring(
-                  previewInstrumentalUrl.lastIndexOf("/") + 1
-                )}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-white">
-              {t("admin.songs.vocalsOptional")}
-            </label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => vocalsInputRef.current?.click()}
-                className="w-full text-zinc-200"
-              >
-                {files.vocalsFile
-                  ? files.vocalsFile.name
-                  : previewVocalsUrl
-                  ? t("admin.songs.changeVocals")
-                  : t("admin.songs.chooseVocals")}
-              </Button>
-              <input
-                type="file"
-                accept="audio/*"
-                ref={vocalsInputRef}
-                hidden
-                onChange={(e) => handleFileSelect(e, "vocals")}
-              />
-              {(previewVocalsUrl || files.vocalsFile) && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleClearVocals}
-                  className="text-red-500 hover:bg-red-900"
-                >
-                  <XCircle className="h-5 w-5" />
-                </Button>
-              )}
-            </div>
-            {previewVocalsUrl && !files.vocalsFile && !clearVocals && (
-              <p className="text-xs text-zinc-500">
-                {t("admin.common.currentFile")}{" "}
-                {previewVocalsUrl.substring(
-                  previewVocalsUrl.lastIndexOf("/") + 1
-                )}
-              </p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -481,7 +395,6 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
               isLoading ||
               !currentSongData.title.trim() ||
               selectedArtistIds.length === 0 ||
-              (!previewInstrumentalUrl && !files.instrumentalFile) ||
               (!isAlbumSelected && !previewImageUrl && !files.imageFile)
             }
           >

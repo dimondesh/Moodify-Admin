@@ -80,10 +80,12 @@ const ArtistsTable = () => {
                 <img
                   src={artist.imageUrl}
                   alt={artist.name}
-                  className="w-10 h-10 rounded object-cover"
+                  className="w-10 h-10 rounded object-cover min-w-10"
                 />
               </TableCell>
-              <TableCell className="font-medium">{artist.name}</TableCell>
+              <TableCell className="font-medium max-w-40 sm:max-w-0 truncate">
+                {artist.name}
+              </TableCell>
               <TableCell className={` ${isMobile ? "hidden" : ""}`}>
                 <span className="inline-flex items-center gap-1 text-zinc-400">
                   <Music className="h-4 w-4" />
