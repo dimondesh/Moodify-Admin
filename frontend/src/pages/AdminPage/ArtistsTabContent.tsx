@@ -13,7 +13,7 @@ const ArtistsTabContent = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <Users2 className="h-5 w-5 text-orange-500" />
+            <Users2 className="h-5 w-5 hidden sm:block text-orange-500" />
             {t("admin.artists.title")}
           </h2>
           <p className="text-gray-400 text-sm mt-1">

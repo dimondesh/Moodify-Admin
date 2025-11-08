@@ -14,7 +14,7 @@ const AlbumsTabContent = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <Library className="h-5 w-5 text-violet-500" />
+            <Library className="h-5 w-5 hidden sm:block text-violet-500" />
             {t("admin.albums.title")}
           </h2>
           <p className="text-gray-400 text-sm mt-1">

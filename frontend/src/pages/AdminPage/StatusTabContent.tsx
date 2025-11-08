@@ -76,7 +76,7 @@ const StatusTabContent = () => {
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <Activity className="h-5 w-5 text-red-500" />
+          <Activity className="h-5 w-5 hidden sm:block text-red-500" />
           {t("admin.status.title")}
         </h2>
         <p className="text-gray-400 text-sm mt-1">
