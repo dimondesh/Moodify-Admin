@@ -16,7 +16,7 @@ const SongsTabContent = () => {
             <Music className="size-5 hidden sm:block text-emerald-500" />
             {t("admin.songs.title")}
           </h2>
-          <p className="text-gray-400 text-sm mt-1 max-w-65 sm:max-w-0">
+          <p className="text-gray-400 text-sm mt-1">
             {t("admin.songs.description")}
           </p>
         </div>
