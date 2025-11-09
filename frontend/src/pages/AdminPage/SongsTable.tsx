@@ -102,7 +102,7 @@ const SongsTable = memo(() => {
             <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
               {t("admin.songs.tableReleaseDate")}
             </TableHead>
-            <TableHead className="text-right text-gray-300">
+            <TableHead className="text-right text-gray-300 mr-2">
               {t("admin.songs.tableActions")}
             </TableHead>
           </TableRow>

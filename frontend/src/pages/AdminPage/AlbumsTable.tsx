@@ -100,7 +100,7 @@ const AlbumsTable = () => {
                 <img
                   src={album.imageUrl}
                   alt={album.title}
-                  className="h-10 w-10 rounded-sm object-cover min-w-10"
+                  className="h-10 w-10 rounded object-cover min-w-10"
                 />
               </TableCell>
               <TableCell className="font-medium text-white max-w-40 sm:max-w-0 truncate">
