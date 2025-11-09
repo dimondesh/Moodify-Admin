@@ -12,11 +12,11 @@ const SongsTabContent = () => {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+          <h2 className="text-xl font-semibold text-white flex items-center gap-2 ">
             <Music className="size-5 hidden sm:block text-emerald-500" />
             {t("admin.songs.title")}
           </h2>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-400 text-sm mt-1 max-w-65 sm:max-w-0">
             {t("admin.songs.description")}
           </p>
         </div>
