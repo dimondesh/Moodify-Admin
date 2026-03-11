@@ -3,6 +3,7 @@
 import { Loader2, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid"; // <-- ДОБАВЛЕН ИМПОРТ UUID
 import { axiosInstance } from "../../lib/axios";
 import {
   Dialog,
@@ -23,6 +24,7 @@ const AddAlbumFromSpotifyDialog = () => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0); // <-- ДОБАВЛЕН СТЕЙТ ПРОГРЕССА
   const [spotifyAlbumUrl, setSpotifyAlbumUrl] = useState("");
   const [albumAudioZip, setAlbumAudioZip] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,35 +39,81 @@ const AddAlbumFromSpotifyDialog = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    setUploadProgress(0);
+
     try {
       if (!spotifyAlbumUrl)
         return toast.error("Please enter Spotify Album URL.");
       if (!albumAudioZip) return toast.error("Please upload ZIP File.");
-      const formData = new FormData();
-      formData.append("spotifyAlbumUrl", spotifyAlbumUrl);
-      formData.append("albumAudioZip", albumAudioZip);
-      await axiosInstance.post("/admin/albums/upload-full-album", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / (progressEvent.total || 1)
-          );
-          console.log(`Upload Progress: ${percentCompleted}%`);
-        },
+
+      const file = albumAudioZip;
+      const chunkSize = 50 * 1024 * 1024; // Режем по 50 МБ
+      const totalChunks = Math.ceil(file.size / chunkSize);
+      const uploadId = uuidv4();
+
+      // Показываем единый Toast для всего процесса
+      toast.loading(`Uploading file in ${totalChunks} parts...`, {
+        id: "upload-toast",
       });
+
+      // 1. ОТПРАВКА ЧАНКОВ
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
+        const chunk = file.slice(start, end);
+
+        const chunkData = new FormData();
+        chunkData.append("chunk", chunk);
+        chunkData.append("uploadId", uploadId);
+        chunkData.append("chunkIndex", (i + 1).toString());
+        chunkData.append("totalChunks", totalChunks.toString());
+
+        await axiosInstance.post("/admin/albums/upload-chunk", chunkData, {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            // Вычисляем общий процент загрузки всех чанков
+            const currentChunkProgress =
+              progressEvent.loaded / (progressEvent.total || 1);
+            const overallProgress = Math.round(
+              ((i + currentChunkProgress) / totalChunks) * 100,
+            );
+            setUploadProgress(overallProgress);
+            console.log(`Upload Progress: ${overallProgress}%`);
+          },
+        });
+      }
+
+      // Обновляем Toast, когда загрузка завершена и началась обработка на сервере
+      toast.loading(
+        "Processing album on server (this may take a few minutes)...",
+        { id: "upload-toast" },
+      );
+      setUploadProgress(100);
+
+      // 2. ФИНАЛЬНЫЙ ЗАПРОС (Передаем URL и ID собранного файла)
+      await axiosInstance.post("/admin/albums/upload-full-album", {
+        spotifyAlbumUrl: spotifyAlbumUrl,
+        uploadId: uploadId,
+      });
+
+      // Успех
       setSpotifyAlbumUrl("");
       setAlbumAudioZip(null);
       setDialogOpen(false);
-      toast.success("Album successfully added from Spotify!");
+      toast.success("Album successfully added from Spotify!", {
+        id: "upload-toast",
+      });
       fetchAlbums();
     } catch (error: any) {
       console.error("Error uploading album from Spotify:", error);
       toast.error(
         "Album wasn't added: " +
-          (error.response?.data?.message || error.message)
+          (error.response?.data?.message || error.message),
+        { id: "upload-toast" }, // Заменяем лоадинг на ошибку
       );
     } finally {
       setIsLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -120,7 +168,7 @@ const AddAlbumFromSpotifyDialog = () => {
               disabled={isLoading}
             />
             <div
-              className="flex items-center justify-center p-6 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer"
+              className="flex items-center justify-center p-6 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer transition-colors hover:border-zinc-500"
               onClick={() => !isLoading && fileInputRef.current?.click()}
             >
               <div className="text-center">
@@ -159,11 +207,18 @@ const AddAlbumFromSpotifyDialog = () => {
           </Button>
           <Button
             onClick={handleSubmit}
-            className="bg-violet-500 hover:bg-violet-600 text-zinc-200"
+            className="bg-violet-500 hover:bg-violet-600 text-zinc-200 min-w-[120px]"
             disabled={isLoading || !spotifyAlbumUrl || !albumAudioZip}
           >
             {isLoading ? (
-              <Loader2 className="animate-spin text-white size-5" />
+              <div className="flex items-center space-x-2">
+                <Loader2 className="animate-spin text-white size-4" />
+                <span>
+                  {uploadProgress < 100
+                    ? `${uploadProgress}%`
+                    : "Processing..."}
+                </span>
+              </div>
             ) : (
               t("admin.albums.add")
             )}
