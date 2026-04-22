@@ -1,4 +1,4 @@
-import { Activity, Cloud, Power, BrainCircuit } from "lucide-react";
+import { Activity, Cloud, Power, BrainCircuit, Cpu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +14,8 @@ const StatusTabContent = () => {
   const [mainBackendStatus, setMainBackendStatus] =
     useState<ServiceStatus>("idle");
   const [analysisServiceStatus, setAnalysisServiceStatus] =
+    useState<ServiceStatus>("idle");
+  const [embeddingServiceStatus, setEmbeddingServiceStatus] =
     useState<ServiceStatus>("idle");
 
   const checkMainBackendStatus = async () => {
@@ -50,9 +52,26 @@ const StatusTabContent = () => {
     }
   };
 
+  const checkEmbeddingServiceStatus = async () => {
+    setEmbeddingServiceStatus("checking");
+    try {
+      const response = await axiosInstance.get(`/stats/health/embedding`);
+
+      if (response.status === 200 && response.data.status === "OK") {
+        setEmbeddingServiceStatus("online");
+      } else {
+        setEmbeddingServiceStatus("offline");
+      }
+    } catch (error) {
+      console.error("Error checking embedding service status:", error);
+      setEmbeddingServiceStatus("offline");
+    }
+  };
+
   useEffect(() => {
     checkMainBackendStatus();
     checkAnalysisServiceStatus();
+    checkEmbeddingServiceStatus();
   }, []);
 
   const StatusBadge = ({ status }: { status: ServiceStatus }) => {
@@ -84,7 +103,7 @@ const StatusTabContent = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -122,6 +141,30 @@ const StatusTabContent = () => {
               <Button
                 onClick={checkAnalysisServiceStatus}
                 disabled={analysisServiceStatus === "checking"}
+              >
+                <Power className="mr-2 h-4 w-4" />
+                {t("admin.status.wakeUpButton")}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground pt-2">
+              {t("admin.status.wakeUpDescription")}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Embedding Service
+            </CardTitle>
+            <Cpu className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between gap-4">
+              <StatusBadge status={embeddingServiceStatus} />
+              <Button
+                onClick={checkEmbeddingServiceStatus}
+                disabled={embeddingServiceStatus === "checking"}
               >
                 <Power className="mr-2 h-4 w-4" />
                 {t("admin.status.wakeUpButton")}
