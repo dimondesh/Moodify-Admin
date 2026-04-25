@@ -17,7 +17,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { axiosInstance } from "@/lib/axios";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -130,9 +129,9 @@ const TestsTabContent = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {activeTest === "analysis" ? (
-                <Activity className="h-5 w-5" />
+                <Activity className="h-5 w-5 text-emerald-500" />
               ) : (
-                <Fingerprint className="h-5 w-5" />
+                <Fingerprint className="h-5 w-5 text-sky-500" />
               )}
               {activeTest === "analysis"
                 ? t("admin.tests.dialogTitleAnalysis")
@@ -140,23 +139,56 @@ const TestsTabContent = () => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            <div className="flex items-center gap-4">
-              <Input
-                type="file"
-                accept="audio/*"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="bg-zinc-800 border-zinc-700"
-              />
+          <div className="space-y-6 py-4">
+            <div className="flex flex-col gap-4">
+              {/* Кастомный Drag & Drop Input */}
+              <div className="relative group cursor-pointer">
+                <input
+                  type="file"
+                  accept="audio/*"
+                  onChange={(e) => setFile(e.target.files?.[0] || null)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  title=""
+                />
+                <div
+                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl transition-all duration-200 ${
+                    file
+                      ? "border-emerald-500 bg-emerald-500/10"
+                      : "border-zinc-700 bg-zinc-800/30 group-hover:border-zinc-500 group-hover:bg-zinc-800/50"
+                  }`}
+                >
+                  {file ? (
+                    <div className="flex flex-col items-center text-center px-4">
+                      <Music className="h-8 w-8 text-emerald-500 mb-2" />
+                      <p className="text-sm font-medium text-emerald-400 truncate max-w-[250px] sm:max-w-[400px]">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-zinc-400 mt-1">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center text-center text-zinc-400 px-4">
+                      <Upload className="h-8 w-8 mb-2 text-zinc-500 group-hover:text-zinc-400 transition-colors" />
+                      <p className="text-sm font-medium text-zinc-300 mb-1">
+                        {t("admin.common.chooseFile")}
+                      </p>
+                      <p className="text-xs text-zinc-500">MP3, WAV, FLAC</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Кнопка запуска */}
               <Button
                 onClick={handleRunTest}
                 disabled={!file || loading}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white h-11"
               >
                 {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
                 ) : (
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Activity className="h-5 w-5 mr-2" />
                 )}
                 {t("admin.tests.startButton")}
               </Button>
@@ -167,68 +199,82 @@ const TestsTabContent = () => {
                 {activeTest === "analysis" && !result.error ? (
                   <div className="space-y-6">
                     <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
-                        <p className="text-[10px] uppercase text-zinc-500">
+                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800 flex flex-col items-center justify-center">
+                        <p className="text-[10px] uppercase text-zinc-500 tracking-wider">
                           BPM
                         </p>
-                        <p className="text-xl font-bold text-emerald-400">
+                        <p className="text-3xl font-bold text-emerald-400 mt-1">
                           {result.bpm}
                         </p>
                       </div>
-                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
-                        <p className="text-[10px] uppercase text-zinc-500">
+                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800 flex flex-col items-center justify-center">
+                        <p className="text-[10px] uppercase text-zinc-500 tracking-wider">
                           Camelot
                         </p>
-                        <p className="text-xl font-bold text-sky-400">
+                        <p className="text-3xl font-bold text-sky-400 mt-1">
                           {result.camelot}
                         </p>
                       </div>
-                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
-                        <p className="text-[10px] uppercase text-zinc-500">
+                      <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800 flex flex-col items-center justify-center">
+                        <p className="text-[10px] uppercase text-zinc-500 tracking-wider">
                           Beats
                         </p>
-                        <p className="text-xl font-bold text-white">
+                        <p className="text-3xl font-bold text-white mt-1">
                           {result.beats?.length}
                         </p>
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs font-medium mb-2 text-zinc-400">
+                      <p className="text-xs font-medium mb-3 text-zinc-400 flex items-center gap-2">
+                        <Activity className="h-3 w-3" />
                         {t("admin.tests.beatGridPreview")}
                       </p>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {result.beats
-                          ?.slice(0, 20)
+                          ?.slice(0, 30)
                           .map((b: number, i: number) => (
                             <Badge
                               key={i}
                               variant="outline"
-                              className="text-[10px] border-zinc-700"
+                              className="text-[10px] border-zinc-700 bg-zinc-900/50 text-zinc-300 font-mono"
                             >
                               {b.toFixed(2)}s
                             </Badge>
                           ))}
-                        <span className="text-zinc-600 text-xs">...</span>
+                        {result.beats?.length > 30 && (
+                          <span className="text-zinc-600 text-xs ml-1 self-center">
+                            ...
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
                 ) : activeTest === "embedding" && !result.error ? (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between bg-zinc-900/80 p-3 rounded-lg border border-zinc-800">
                       <p className="text-sm font-medium text-emerald-400 flex items-center gap-2">
                         <Music className="h-4 w-4" />{" "}
                         {t("admin.tests.vectorExtracted")}
                       </p>
-                      <Badge variant="secondary">
+                      <Badge
+                        variant="secondary"
+                        className="bg-sky-500/10 text-sky-400 border-none"
+                      >
                         {result.embedding?.length} {t("admin.tests.dimensions")}
                       </Badge>
                     </div>
-                    <div className="bg-zinc-900 p-3 rounded font-mono text-[10px] text-zinc-400 break-all leading-relaxed">
-                      [ {result.embedding?.join(", ")} ]
+                    <div className="bg-black/80 p-4 rounded-xl font-mono text-xs text-zinc-400 break-all leading-relaxed border border-zinc-800/50">
+                      <span className="text-zinc-600">[</span>{" "}
+                      {result.embedding?.join(", ")}{" "}
+                      <span className="text-zinc-600">]</span>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-red-400 text-sm">{result.error}</p>
+                  <div className="flex flex-col items-center justify-center h-full text-red-400 p-6 bg-red-500/10 rounded-lg border border-red-500/20">
+                    <p className="text-sm font-medium text-center">
+                      {result.error}
+                    </p>
+                  </div>
                 )}
               </ScrollArea>
             )}
