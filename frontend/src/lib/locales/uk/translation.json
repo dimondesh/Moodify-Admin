@@ -721,13 +721,30 @@
       "songs": "Треки",
       "albums": "Альбоми",
       "artists": "Виконавці",
-      "status": "Статус "
+      "status": "Статус",
+      "tests": "Тести"
     },
     "stats": {
       "totalSongs": "Всього треків",
       "totalAlbums": "Всього альбомів",
       "totalArtists": "Всього виконавців",
       "totalUsers": "Всього користувачів"
+    },
+    "tests": {
+      "title": "Тестування алгоритмів",
+      "description": "Діагностичні інструменти для перевірки точності аналізу BPM, тональності та ембедингів.",
+      "titleAnalysis": "Тестовий аналіз",
+      "descAnalysis": "BPM & Camelot",
+      "subDescAnalysis": "Сітка бітів Madmom (RNN) та тональність Essentia",
+      "titleEmbedding": "Тестове витягання",
+      "descEmbedding": "Embeddings",
+      "subDescEmbedding": "Перевірка Librosa: векторна схожість (39 dim)",
+      "dialogTitleAnalysis": "Тестування аудіо-аналізу",
+      "dialogTitleEmbedding": "Тестування ембедингів",
+      "startButton": "Пуск",
+      "beatGridPreview": "Beat Grid (Перші 20 міток):",
+      "vectorExtracted": "Вектор успішно витягнуто",
+      "dimensions": "вимірів"
     },
     "songs": {
       "title": "Бібліотека треків",

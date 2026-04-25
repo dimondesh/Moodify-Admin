@@ -1,6 +1,13 @@
 // frontend/src/pages/AdminPage/AdminPage.tsx
 
-import { Activity, Album, Home, Music, Users2 } from "lucide-react";
+import {
+  Activity,
+  Album,
+  FlaskConical,
+  Home,
+  Music,
+  Users2,
+} from "lucide-react";
 import {
   Tabs,
   TabsContent,
@@ -21,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import StatusTabContent from "./StatusTabContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Helmet } from "react-helmet-async";
+import TestsTabContent from "./TestsTabContent";
 
 const AdminPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -90,6 +98,13 @@ const AdminPage = () => {
                   <Users2 className={`mr-2 size-4 ${isMobile ? "ml-2" : ""}`} />
                   {isMobile ? "" : t("admin.tabs.artists")}
                 </TabsTrigger>
+                <TabsTrigger
+                  value="tests"
+                  className="data-[state=active]:bg-zinc-800"
+                >
+                  <FlaskConical className="mr-2 h-4 w-4" />
+                  {isMobile ? "" : t("admin.tabs.tests")}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="status">
                 <StatusTabContent />
@@ -102,6 +117,9 @@ const AdminPage = () => {
               </TabsContent>
               <TabsContent value="artists">
                 <ArtistsTabContent />
+              </TabsContent>
+              <TabsContent value="tests">
+                <TestsTabContent />
               </TabsContent>
             </Tabs>
           </div>

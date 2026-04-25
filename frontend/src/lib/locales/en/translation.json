@@ -715,7 +715,24 @@
       "songs": "Songs",
       "albums": "Albums",
       "artists": "Artists",
-      "status": "Status "
+      "status": "Status",
+      "tests": "Tests"
+    },
+    "tests": {
+      "title": "Algorithm Testing",
+      "description": "Diagnostic tools for checking the accuracy of BPM, key, and embedding analysis.",
+      "titleAnalysis": "Test Analysis",
+      "descAnalysis": "BPM & Camelot",
+      "subDescAnalysis": "Madmom (RNN) beat grid & Essentia key",
+      "titleEmbedding": "Test Extraction",
+      "descEmbedding": "Embeddings",
+      "subDescEmbedding": "Librosa check: vector similarity (39 dim)",
+      "dialogTitleAnalysis": "Audio Analysis Testing",
+      "dialogTitleEmbedding": "Embeddings Testing",
+      "startButton": "Start",
+      "beatGridPreview": "Beat Grid (First 20 markers):",
+      "vectorExtracted": "Vector successfully extracted",
+      "dimensions": "dimensions"
     },
     "stats": {
       "totalSongs": "Total Songs",
