@@ -19,7 +19,7 @@ const resources = {
 i18n.use(initReactI18next).init({
   resources,
   fallbackLng: "en", // Язык, который будет использоваться, если перевод отсутствует
-  debug: process.env.NODE_ENV === "development", // Включаем логи в режиме разработки
+  debug: import.meta.env.DEV,
   interpolation: {
     escapeValue: false,
   },

@@ -1,17 +1,18 @@
-// moodify-admin-frontend/src/App.tsx
 import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./stores/useAuthStore";
 import AdminPage from "./pages/AdminPage/AdminPage";
-import AuthPage from "./pages/AuthPage/AuthPage"; // Упрощенная страница входа
+import AuthPage from "./pages/AuthPage/AuthPage";
 import { JSX } from "react";
 
-// Компонент для защиты роутов
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { user, isAdmin } = useAuthStore.getState();
-  // Проверяем и пользователя, и флаг админа
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+  const accessToken = useAuthStore((s) => s.accessToken);
   if (!user || !isAdmin) {
-    return <Navigate to="/login" replace />;
+    const loginPath =
+      accessToken && !isAdmin ? "/login?step=access_denied" : "/login";
+    return <Navigate to={loginPath} replace />;
   }
   return children;
 };
@@ -65,7 +66,7 @@ function App() {
             },
           },
         }}
-      />{" "}
+      />
     </>
   );
 }

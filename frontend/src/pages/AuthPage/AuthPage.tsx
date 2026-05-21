@@ -1,312 +1,329 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  sendEmailVerification,
-  updateProfile,
-  AuthError,
-  signOut,
-} from "firebase/auth";
-import { auth } from "../../lib/firebase";
-import { useAuthStore } from "../../stores/useAuthStore";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
+import { useAuthStore, NotAdminError } from "../../stores/useAuthStore";
+import { axiosInstance } from "../../lib/axios";
 import toast from "react-hot-toast";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
-import { Loader2, MailCheck } from "lucide-react";
-import MoodifyLogo from "../../components/MoodifyLogo";
+import { Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
-import "./AuthPage.css";
-import { motion } from "framer-motion";
+import AuthShell from "../../components/auth/AuthShell";
+
+type AuthStep = "email" | "login_password" | "access_denied";
+
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim() || "";
+
+function AuthGoogleOAuthButton({
+  setIsLoading,
+  setErrorItem,
+  onNotAdmin,
+}: {
+  setIsLoading: (v: boolean) => void;
+  setErrorItem: (msg: string) => void;
+  onNotAdmin: () => void;
+}) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const completeGoogleAccessToken = useAuthStore(
+    (s) => s.completeGoogleAccessToken,
+  );
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setIsLoading(true);
+      try {
+        await completeGoogleAccessToken(tokenResponse.access_token);
+        toast.success(t("auth.loginSuccess"));
+        navigate("/", { replace: true });
+      } catch (error: unknown) {
+        if (error instanceof NotAdminError) {
+          onNotAdmin();
+        } else {
+          const err = error as {
+            response?: { data?: { code?: string; error?: string } };
+          };
+          const code = err?.response?.data?.code;
+          if (code === "ACCOUNT_EXISTS_PASSWORD") {
+            setErrorItem(t("auth.googleAccountExistsUsePassword"));
+          } else {
+            setErrorItem(
+              err?.response?.data?.error || t("auth.googleSignInFailed"),
+            );
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: () => {
+      toast.error(t("auth.googleSignInFailed"));
+    },
+    scope: "openid email profile",
+  });
+
+  return (
+    <Button
+      onClick={() => googleLogin()}
+      variant="outline"
+      type="button"
+      className="w-full h-12 border-gray-700 hover:bg-gray-900 rounded-full shrink-0"
+    >
+      <img src="/google.svg" alt="G" className="w-5 h-5 mr-3" />
+      {t("auth.continueWithGoogle", "Google")}
+    </Button>
+  );
+}
 
 const AuthPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useAuthStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const user = useAuthStore((s) => s.user);
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+  const loginWithPassword = useAuthStore((s) => s.loginWithPassword);
+  const reset = useAuthStore((s) => s.reset);
 
-  const [isLoginView, setIsLoginView] = useState(
-    location.state?.mode !== "signup"
-  );
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({ email: "", password: "" });
+  const rawStep = (searchParams.get("step") as AuthStep) || "email";
+  const step: AuthStep =
+    rawStep === "login_password" || rawStep === "access_denied"
+      ? rawStep
+      : "email";
+
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [errorItem, setErrorItem] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const goToAccessDenied = () => {
+    setSearchParams({ step: "access_denied" });
+  };
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
+    if (user && isAdmin) {
+      navigate("/", { replace: true });
     }
-  }, [user, navigate]);
-
-  const validateEmail = (email: string) => {
-    if (!email) return t("auth.emailRequired");
-    if (email.length > 42) return t("auth.emailMaxLength");
-    if (!/\S+@\S+\.\S+/.test(email)) return t("auth.emailInvalid");
-    return "";
-  };
-
-  const validatePassword = (password: string) => {
-    if (!password) return t("auth.passwordRequired");
-    if (password.length < 6) return t("auth.passwordMinLength");
-    if (password.length > 20) return t("auth.passwordMaxLength");
-    return "";
-  };
+  }, [user, isAdmin, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setErrorItem("");
   };
 
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      navigate("/");
-    } catch (error) {
-      toast.error(t("auth.googleSignInFailed"));
-      console.error("Google sign-in error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const emailError = validateEmail(formData.email);
-    const passwordError = validatePassword(formData.password);
-
-    if (emailError || passwordError) {
-      setErrors({ email: emailError, password: passwordError });
-      return;
+    if (!formData.email) {
+      return setErrorItem(t("auth.emailRequired"));
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      return setErrorItem(t("auth.emailInvalid"));
     }
 
     setIsLoading(true);
-
     try {
-      if (isLoginView) {
-        await signInWithEmailAndPassword(
-          auth,
-          formData.email,
-          formData.password
-        );
-        toast.success(t("auth.loginSuccess"));
-        navigate("/");
+      const response = await axiosInstance.post("/auth/check-email", {
+        email: formData.email.trim().toLowerCase(),
+      });
+      const exists = response.data.exists as boolean;
+      if (exists) {
+        setSearchParams({ step: "login_password" });
       } else {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          formData.email,
-          formData.password
-        );
-        await updateProfile(userCredential.user, {
-          displayName: formData.fullName,
-        });
-        await sendEmailVerification(userCredential.user);
-        await signOut(auth);
-
-        toast.success(t("auth.signupSuccess"));
-        setVerificationSent(true);
+        setErrorItem(t("auth.errorUserNotFound"));
       }
-    } catch (error) {
-      const authError = error as AuthError;
-      let errorMessage = "An unknown error occurred.";
-      switch (authError.code) {
-        case "auth/user-not-found":
-        case "auth/wrong-password":
-        case "auth/invalid-credential":
-          errorMessage = t("auth.errorInvalidCredentials");
-          break;
-        case "auth/email-already-in-use":
-          errorMessage = t("auth.errorEmailInUse");
-          break;
-        case "auth/invalid-email":
-          errorMessage = t("auth.errorInvalidEmail");
-          break;
-        default:
-          errorMessage = t("auth.errorAuthFailed");
-      }
-      toast.error(errorMessage);
-      console.error("Firebase auth error:", authError);
+    } catch {
+      setErrorItem(t("auth.checkEmailError"));
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (verificationSent) {
-    return (
-      <div className="min-h-screen bg-black text-white flex flex-col justify-center items-center p-4">
-        <div className="w-full max-w-md text-center">
-          <main className="bg-zinc-900 rounded-lg p-8 shadow-lg">
-            <MailCheck className="w-16 h-16 text-violet-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-4">
-              {t("auth.verifyEmailTitle")}
-            </h1>
-            <p className="text-zinc-400 mb-6">
-              {t("auth.verifyEmailMessage1")}{" "}
-              <span className="font-bold text-white">{formData.email}</span>.{" "}
-              {t("auth.verifyEmailMessage2")}
-            </p>
-            <Button
-              onClick={() => {
-                setVerificationSent(false);
-                setIsLoginView(true);
-              }}
-              className="w-full h-12 bg-violet-600 hover:bg-violet-700"
-            >
-              {t("auth.backToLogin")}
-            </Button>
-          </main>
-        </div>
-      </div>
-    );
-  }
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await loginWithPassword(formData.email, formData.password);
+      toast.success(t("auth.loginSuccess"));
+      navigate("/", { replace: true });
+    } catch (error: unknown) {
+      if (error instanceof NotAdminError) {
+        goToAccessDenied();
+      } else {
+        const err = error as { response?: { data?: { error?: string } } };
+        setErrorItem(
+          err?.response?.data?.error || t("auth.errorInvalidCredentials"),
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTryAnotherAccount = () => {
+    reset();
+    setFormData({ email: "", password: "" });
+    setErrorItem("");
+    setSearchParams({});
+  };
+
+  const goBackFromPassword = () => {
+    setFormData((prev) => ({ ...prev, password: "" }));
+    setErrorItem("");
+    setSearchParams({});
+  };
+
+  const googleSection = googleClientId ? (
+    <AuthGoogleOAuthButton
+      setIsLoading={setIsLoading}
+      setErrorItem={setErrorItem}
+      onNotAdmin={goToAccessDenied}
+    />
+  ) : (
+    <Button
+      type="button"
+      variant="outline"
+      onClick={() => toast.error(t("auth.googleNotConfigured"))}
+      className="w-full h-12 border-gray-700 hover:bg-gray-900 rounded-full shrink-0"
+    >
+      <img src="/google.svg" alt="G" className="w-5 h-5 mr-3" />
+      {t("auth.continueWithGoogle", "Google")}
+    </Button>
+  );
 
   return (
     <>
       <Helmet>
         <title>
-          {isLoginView ? t("auth.loginTitle") : t("auth.signupTitle")}
+          {step === "access_denied"
+            ? t("admin.unauthorized")
+            : `${t("auth.loginTitle", "Вход")} - Moodify Admin`}
         </title>
       </Helmet>
-      <div className="min-h-screen bg-gradient-to-b from-violet-900/10 to-zinc-950 text-white flex flex-col justify-center items-center p-4">
-        <div className="w-full max-w-md">
-          <header className="text-center mb-8"></header>
-          <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="rounded-lg"
-          >
-            <main className="rounded-lg p-8 shadow-lg glass-card">
-              <Link to="/" className="flex justify-center mb-6">
-                <div className="auth-logo-container">
-                  <MoodifyLogo />
-                </div>
-              </Link>
-              <h1 className="text-2xl font-bold text-center mb-6">
-                {isLoginView ? t("auth.loginTitle") : t("auth.signupTitle")}
+
+      <AuthShell
+        showBack={step === "login_password"}
+        onBack={step === "login_password" ? goBackFromPassword : undefined}
+      >
+        {step === "email" && (
+          <form onSubmit={handleEmailSubmit} className="flex flex-col flex-1">
+            <div className="text-center mb-8 h-[80px] flex flex-col items-center justify-start shrink-0">
+              <h1 className="text-3xl font-bold mb-2">
+                {t("auth.loginWelcome", "С возвращением")}
               </h1>
+            </div>
 
-              <Button
-                onClick={handleGoogleSignIn}
-                variant="outline"
-                className="w-full h-12 bg-zinc-900 border-zinc-700 hover:bg-zinc-800 hover:text-white"
-                disabled={isLoading}
+            <div>
+              <Label htmlFor="email" className="text-sm text-gray-300 mb-2 block">
+                {t("auth.emailLabel", "Email")}
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="bg-gray-900 border-gray-700 py-6"
+              />
+              <div className="min-h-[24px] mt-2">
+                {errorItem && (
+                  <div className="text-red-500 text-xs">{errorItem}</div>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 bg-violet-500 hover:bg-violet-600 text-black font-bold rounded-full mt-2 shrink-0"
+            >
+              {t("common.continue", "Продолжить")}
+            </Button>
+
+            <div className="flex items-center gap-2 my-4 shrink-0">
+              <div className="flex-1 h-px bg-gray-700" />
+              <span className="text-xs text-gray-500 uppercase">
+                {t("auth.or", "или")}
+              </span>
+              <div className="flex-1 h-px bg-gray-700" />
+            </div>
+
+            {googleSection}
+          </form>
+        )}
+
+        {step === "login_password" && (
+          <form onSubmit={handleLoginSubmit} className="flex flex-col flex-1">
+            <div className="text-center mb-8 h-[80px] flex flex-col items-center justify-start shrink-0">
+              <h1 className="text-3xl font-bold mb-2">
+                {t("auth.loginTitle", "Вход")}
+              </h1>
+              <p className="text-gray-400 text-sm">{formData.email}</p>
+            </div>
+
+            <div>
+              <Label
+                htmlFor="password"
+                className="text-sm text-gray-300 mb-2 block"
               >
-                <img src="/google.svg" alt="Google" className="w-5 h-5 mr-3" />
-                {t("auth.continueWithGoogle")}
-              </Button>
-
-              <div className="flex items-center my-6">
-                <div className="flex-grow border-t border-zinc-700"></div>
-                <span className="mx-4 text-zinc-500 text-sm">
-                  {t("auth.or")}
-                </span>
-                <div className="flex-grow border-t border-zinc-700"></div>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {!isLoginView && (
-                  <div>
-                    <Label htmlFor="fullName">{t("auth.fullNameLabel")}</Label>
-                    <Input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder={t("auth.fullNamePlaceholder")}
-                      required
-                      className="mt-1"
-                    />
-                  </div>
-                )}
-                <div>
-                  <Label htmlFor="email">{t("auth.emailLabel")}</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder={t("auth.emailPlaceholder")}
-                    required
-                    maxLength={42}
-                    className="mt-1"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                  )}
-                </div>
-                <div>
-                  <Label htmlFor="password">{t("auth.passwordLabel")}</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder={t("auth.passwordPlaceholder")}
-                    required
-                    minLength={6}
-                    maxLength={42}
-                    className="mt-1"
-                  />
-                  {errors.password && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.password}
-                    </p>
-                  )}
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full h-12 bg-violet-600 hover:bg-violet-700"
-                  disabled={isLoading}
+                {t("auth.passwordLabel", "Пароль")}
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="bg-gray-900 border-gray-700 py-6 pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
                 >
-                  {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )}
-                  {isLoginView ? t("auth.loginButton") : t("auth.signupButton")}
-                </Button>
-              </form>
-
-              <div className="text-center mt-6 text-sm text-zinc-400">
-                {isLoginView ? (
-                  <span>
-                    {t("auth.promptSignup")}{" "}
-                    <button
-                      onClick={() => setIsLoginView(false)}
-                      className="text-violet-400 hover:underline"
-                    >
-                      {t("auth.signupLink")}
-                    </button>
-                  </span>
-                ) : (
-                  <span>
-                    {t("auth.promptLogin")}{" "}
-                    <button
-                      onClick={() => setIsLoginView(true)}
-                      className="text-violet-400 hover:underline"
-                    >
-                      {t("auth.loginLink")}
-                    </button>
-                  </span>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              <div className="min-h-[24px] mt-2">
+                {errorItem && (
+                  <div className="text-red-500 text-xs">{errorItem}</div>
                 )}
               </div>
-            </main>
-          </motion.main>
-        </div>
-      </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 bg-violet-500 hover:bg-violet-600 text-black font-bold rounded-full mt-4 shrink-0"
+            >
+              {t("auth.loginButton", "Войти")}
+            </Button>
+          </form>
+        )}
+
+        {step === "access_denied" && (
+          <div className="flex flex-col flex-1 items-center text-center">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-400">
+              <ShieldAlert size={32} />
+            </div>
+            <h1 className="text-3xl font-bold mb-3">{t("admin.unauthorized")}</h1>
+            <p className="text-gray-400 text-sm mb-8 max-w-[280px]">
+              {t("admin.accessDeniedDescription")}
+            </p>
+            <Button
+              type="button"
+              onClick={handleTryAnotherAccount}
+              className="w-full h-12 bg-violet-500 hover:bg-violet-600 text-black font-bold rounded-full shrink-0"
+            >
+              {t("admin.tryAnotherAccount")}
+            </Button>
+          </div>
+        )}
+      </AuthShell>
     </>
   );
 };

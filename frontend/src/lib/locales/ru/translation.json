@@ -714,6 +714,11 @@
       "loadingStats": "Загрузка статистики..."
     },
     "unauthorized": "Нет доступа",
+    "loginTitle": "Вход — Moodify Admin",
+    "loginWelcome": "Панель администратора",
+    "loginSubtitle": "Вход только для администраторов",
+    "accessDeniedDescription": "У этой учётной записи нет прав администратора. Войдите под другим email или обратитесь к владельцу проекта.",
+    "tryAnotherAccount": "Войти под другим аккаунтом",
     "backToHome": "Вернуться на главную",
     "title": "Управление музыкой",
     "description": "Управляйте своим музыкальным каталогом",
@@ -1028,6 +1033,8 @@
     "passwordMinLength": "Пароль должен содержать не менее 6 символов.",
     "passwordMaxLength": "Пароль должен быть не длиннее 20 символов.",
     "googleSignInFailed": "Ошибка входа через Google. Пожалуйста, попробуйте еще раз.",
+    "googleNotConfigured": "Вход через Google не настроен (нет VITE_GOOGLE_CLIENT_ID).",
+    "googleAccountExistsUsePassword": "Этот email зарегистрирован с паролем. Войдите через почту и пароль.",
     "loginSuccess": "Вы успешно вошли!",
     "signupSuccess": "Аккаунт создан! Пожалуйста, проверьте свою почту для верификации.",
     "errorInvalidCredentials": "Неверный email или пароль.",
@@ -1038,6 +1045,7 @@
     "verifyEmailMessage1": "Мы отправили ссылку для подтверждения на",
     "verifyEmailMessage2": "Пожалуйста, проверьте ваш почтовый ящик и перейдите по ссылке, чтобы активировать аккаунт.",
     "backToLogin": "Вернуться ко входу",
+    "loginWelcome": "С возвращением",
     "loginTitle": "Войти в Moodify",
     "signupTitle": "Зарегистрироваться в Moodify",
     "continueWithGoogle": "Продолжить с Google",
@@ -1054,9 +1062,12 @@
     "signupLink": "Зарегистрируйтесь",
     "promptLogin": "Уже есть аккаунт?",
     "loginLink": "Войти",
-    "verifyEmailPrompt": "Пожалуйста, подтвердите ваш email перед входом."
+    "verifyEmailPrompt": "Пожалуйста, подтвердите ваш email перед входом.",
+    "errorUserNotFound": "Аккаунт с таким email не найден.",
+    "checkEmailError": "Не удалось проверить email. Попробуйте снова."
   },
   "common": {
+    "continue": "Продолжить",
     "unknownArtist": "Неизвестный исполнитель",
     "songsNotFound": "Нет песен в этой категории.",
     "noTitle": "Без названия",

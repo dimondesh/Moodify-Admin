@@ -4,7 +4,7 @@ import {
   Activity,
   Album,
   FlaskConical,
-  Home,
+  ListOrdered,
   Music,
   Users2,
 } from "lucide-react";
@@ -14,7 +14,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-import { useAuthStore } from "../../stores/useAuthStore";
 import DashboardStats from "./DashboardStats";
 import Header from "./Header";
 import SongsTabContent from "./SongsTabContent";
@@ -22,39 +21,22 @@ import AlbumsTabContent from "./AlbumsTabContent";
 import ArtistsTabContent from "./ArtistsTabContent";
 import { useEffect } from "react";
 import { useMusicStore } from "../../stores/useMusicStore";
-import { Button } from "../../components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import StatusTabContent from "./StatusTabContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Helmet } from "react-helmet-async";
 import TestsTabContent from "./TestsTabContent";
+import QueueTabContent from "./QueueTabContent";
 
 const AdminPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const { t } = useTranslation();
-  const { isAdmin, isLoading } = useAuthStore();
   const { fetchStats } = useMusicStore();
 
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
-
-  const navigate = useNavigate();
-  if (!isAdmin && !isLoading)
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-zinc-800 to-zinc-900 text-6xl text-zinc-200">
-        {t("admin.unauthorized")}
-        <Button
-          onClick={() => navigate("/")}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white w-full sm:w-auto mt-4"
-        >
-          <Home className="mr-2 h-4 w-4" />
-          {t("admin.backToHome")}
-        </Button>
-      </div>
-    );
 
   return (
     <>
@@ -105,6 +87,13 @@ const AdminPage = () => {
                   <FlaskConical className="mr-2 h-4 w-4" />
                   {isMobile ? "" : t("admin.tabs.tests")}
                 </TabsTrigger>
+                <TabsTrigger
+                  value="queue"
+                  className="data-[state=active]:bg-zinc-800"
+                >
+                  <ListOrdered className="mr-2 h-4 w-4" />
+                  {isMobile ? "" : "Queue"}
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="status">
                 <StatusTabContent />
@@ -120,6 +109,9 @@ const AdminPage = () => {
               </TabsContent>
               <TabsContent value="tests">
                 <TestsTabContent />
+              </TabsContent>
+              <TabsContent value="queue">
+                <QueueTabContent />
               </TabsContent>
             </Tabs>
           </div>

@@ -714,6 +714,11 @@
       "loadingStats": "Завантаження статистики..."
     },
     "unauthorized": "Немає доступу",
+    "loginTitle": "Вхід — Moodify Admin",
+    "loginWelcome": "Панель адміністратора",
+    "loginSubtitle": "Вхід лише для адміністраторів",
+    "accessDeniedDescription": "У цього облікового запису немає прав адміністратора. Увійдіть під іншим email або зверніться до власника проєкту.",
+    "tryAnotherAccount": "Увійти під іншим акаунтом",
     "backToHome": "Повернутися на головну",
     "title": "Керування музикою",
     "description": "Керуйте своїм музичним каталогом",
@@ -1028,6 +1033,8 @@
     "passwordMinLength": "Пароль повинен містити щонайменше 6 символів.",
     "passwordMaxLength": "Пароль має бути не довшим за 20 символів.",
     "googleSignInFailed": "Помилка входу через Google. Будь ласка, спробуйте ще раз.",
+    "googleNotConfigured": "Вхід через Google не налаштовано (немає VITE_GOOGLE_CLIENT_ID).",
+    "googleAccountExistsUsePassword": "Цей email зареєстровано з паролем. Увійдіть через пошту та пароль.",
     "loginSuccess": "Ви успішно увійшли!",
     "signupSuccess": "Обліковий запис створено! Будь ласка, перевірте свою пошту для верифікації.",
     "errorInvalidCredentials": "Невірна пошта або пароль.",
@@ -1038,6 +1045,7 @@
     "verifyEmailMessage1": "Ми надіслали посилання для підтвердження на",
     "verifyEmailMessage2": "Будь ласка, перевірте вашу поштову скриньку та перейдіть за посиланням, щоб активувати акаунт.",
     "backToLogin": "Повернутися до входу",
+    "loginWelcome": "З поверненням",
     "loginTitle": "Увійти в Moodify",
     "signupTitle": "Зареєструватися в Moodify",
     "continueWithGoogle": "Продовжити з Google",
@@ -1054,9 +1062,12 @@
     "signupLink": "Зареєструйтесь",
     "promptLogin": "Вже є обліковий запис?",
     "loginLink": "Увійти",
-    "verifyEmailPrompt": "Будь ласка, підтвердіть вашу пошту перед входом."
+    "verifyEmailPrompt": "Будь ласка, підтвердіть вашу пошту перед входом.",
+    "errorUserNotFound": "Обліковий запис з таким email не знайдено.",
+    "checkEmailError": "Не вдалося перевірити email. Спробуйте ще раз."
   },
   "common": {
+    "continue": "Продовжити",
     "unknownArtist": "Невідомий виконавець",
     "songsNotFound": "Немає пісень у цій категорії.",
     "noTitle": "Без назви",

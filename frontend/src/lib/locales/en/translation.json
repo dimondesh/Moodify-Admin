@@ -708,6 +708,11 @@
       "dbStatsTitle": "Database Statistics"
     },
     "unauthorized": "Unauthorized",
+    "loginTitle": "Sign in — Moodify Admin",
+    "loginWelcome": "Admin panel",
+    "loginSubtitle": "Administrators only",
+    "accessDeniedDescription": "This account does not have administrator rights. Sign in with another email or contact the project owner.",
+    "tryAnotherAccount": "Sign in with another account",
     "backToHome": "Back to Home",
     "title": "Music Manager",
     "description": "Manage your music catalog",
@@ -1027,6 +1032,8 @@
     "passwordMinLength": "Password must be at least 6 characters.",
     "passwordMaxLength": "Password must be 20 characters or less.",
     "googleSignInFailed": "Google sign-in failed. Please try again.",
+    "googleNotConfigured": "Google sign-in is not configured (missing VITE_GOOGLE_CLIENT_ID).",
+    "googleAccountExistsUsePassword": "This email uses a password. Sign in with email and password.",
     "loginSuccess": "Logged in successfully!",
     "signupSuccess": "Account created! Please check your email to verify.",
     "errorInvalidCredentials": "Invalid email or password.",
@@ -1037,6 +1044,7 @@
     "verifyEmailMessage1": "We've sent a verification link to",
     "verifyEmailMessage2": "Please check your inbox and follow the link to activate your account.",
     "backToLogin": "Back to Login",
+    "loginWelcome": "Welcome back",
     "loginTitle": "Log In to Moodify",
     "signupTitle": "Sign Up to Moodify",
     "continueWithGoogle": "Continue with Google",
@@ -1053,9 +1061,12 @@
     "signupLink": "Sign up",
     "promptLogin": "Already have an account?",
     "loginLink": "Log in",
-    "verifyEmailPrompt": "Please verify your email before logging in."
+    "verifyEmailPrompt": "Please verify your email before logging in.",
+    "errorUserNotFound": "No account found with this email.",
+    "checkEmailError": "Could not verify email. Please try again."
   },
   "common": {
+    "continue": "Continue",
     "unknownArtist": "Unknown Artist",
     "songsNotFound": "No available songs in this category.",
     "noTitle": "No title",

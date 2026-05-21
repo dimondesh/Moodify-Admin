@@ -1,29 +1,36 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../lib/firebase";
-import { Button } from "./button";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore, NotAdminError } from "../../stores/useAuthStore";
+import { Button } from "./button";
 import { useTranslation } from "react-i18next";
 
 const SignInOAuthButton = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const completeGoogleAccessToken = useAuthStore(
+    (s) => s.completeGoogleAccessToken,
+  );
 
-  const signInWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-
-      if (result?.user?.uid) {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        await completeGoogleAccessToken(tokenResponse.access_token);
         navigate("/");
+      } catch (error) {
+        if (error instanceof NotAdminError) {
+          navigate("/login?step=access_denied", { replace: true });
+        }
       }
-    } catch (error) {
-      console.error("Google sign-in error:", error);
-    }
-  };
+    },
+    onError: () => {
+      // ignore
+    },
+    scope: "openid email profile",
+  });
 
   return (
     <Button
-      onClick={signInWithGoogle}
+      onClick={() => googleLogin()}
       variant="secondary"
       className="w-30 md:w-40 text-white border-zinc-200 h-10"
     >
