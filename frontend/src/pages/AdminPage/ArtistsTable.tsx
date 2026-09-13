@@ -89,7 +89,7 @@ const ArtistsTable = () => {
               <TableCell className={` ${isMobile ? "hidden" : ""}`}>
                 <span className="inline-flex items-center gap-1 text-zinc-400">
                   <Music className="h-4 w-4" />
-                  {artist.albums?.length || 0}{" "}
+                  {artist.albumCount ?? artist.albums?.length ?? 0}{" "}
                   {t("admin.artists.tableAlbums").toLowerCase()}
                 </span>
               </TableCell>

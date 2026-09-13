@@ -4,7 +4,6 @@ import {
   Activity,
   Album,
   FlaskConical,
-  ListOrdered,
   Music,
   Users2,
 } from "lucide-react";
@@ -26,7 +25,6 @@ import StatusTabContent from "./StatusTabContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Helmet } from "react-helmet-async";
 import TestsTabContent from "./TestsTabContent";
-import QueueTabContent from "./QueueTabContent";
 
 const AdminPage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -87,13 +85,6 @@ const AdminPage = () => {
                   <FlaskConical className="mr-2 h-4 w-4" />
                   {isMobile ? "" : t("admin.tabs.tests")}
                 </TabsTrigger>
-                <TabsTrigger
-                  value="queue"
-                  className="data-[state=active]:bg-zinc-800"
-                >
-                  <ListOrdered className="mr-2 h-4 w-4" />
-                  {isMobile ? "" : "Queue"}
-                </TabsTrigger>
               </TabsList>
               <TabsContent value="status">
                 <StatusTabContent />
@@ -109,9 +100,6 @@ const AdminPage = () => {
               </TabsContent>
               <TabsContent value="tests">
                 <TestsTabContent />
-              </TabsContent>
-              <TabsContent value="queue">
-                <QueueTabContent />
               </TabsContent>
             </Tabs>
           </div>

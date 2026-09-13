@@ -5,6 +5,7 @@ export interface Artist {
   imageUrl: string;
   songs: Song[];
   albums: Album[];
+  albumCount?: number;
   addedAt?: string;
   bannerUrl?: string;
 

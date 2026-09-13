@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -13,36 +13,68 @@ import {
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import {
+  getApiErrorMessage,
+  ingestAlbumFromSpotify,
+} from "../../lib/albumIngest";
+import { useMusicStore } from "../../stores/useMusicStore";
 import { useTranslation } from "react-i18next";
-import { useUploadStore } from "../../stores/useUploadStore";
+
+const UPLOAD_TOAST_ID = "upload-toast";
 
 const AddAlbumFromSpotifyDialog = () => {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [spotifyAlbumUrl, setSpotifyAlbumUrl] = useState("");
   const [albumAudioZip, setAlbumAudioZip] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Подключаем наш новый стор
-  const addTask = useUploadStore((state) => state.addTask);
+  const { fetchAlbums } = useMusicStore();
 
   const handleZipFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setAlbumAudioZip(file);
   };
 
-  const handleSubmit = () => {
-    if (!spotifyAlbumUrl) return toast.error("Please enter Spotify Album URL.");
-    if (!albumAudioZip) return toast.error("Please upload ZIP File.");
-
-    // Отправляем в фон
-    addTask(spotifyAlbumUrl, albumAudioZip);
-    toast.success("Добавлено в очередь! Откройте вкладку Queue.");
-
-    // Моментально сбрасываем стейт и закрываем
+  const resetForm = () => {
     setSpotifyAlbumUrl("");
     setAlbumAudioZip(null);
-    setDialogOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSubmit = async () => {
+    if (!spotifyAlbumUrl) {
+      toast.error("Please enter Spotify Album URL.");
+      return;
+    }
+
+    setIsLoading(true);
+    setUploadProgress(0);
+
+    try {
+      await ingestAlbumFromSpotify(spotifyAlbumUrl, albumAudioZip, {
+        onUploadProgress: setUploadProgress,
+        onStatus: (message) =>
+          toast.loading(message, { id: UPLOAD_TOAST_ID }),
+      });
+
+      resetForm();
+      setDialogOpen(false);
+      toast.success("Album successfully added from Spotify!", {
+        id: UPLOAD_TOAST_ID,
+      });
+      fetchAlbums();
+    } catch (error: unknown) {
+      console.error("Error uploading album from Spotify:", error);
+      toast.error(
+        "Album wasn't added: " + getApiErrorMessage(error),
+        { id: UPLOAD_TOAST_ID },
+      );
+    } finally {
+      setIsLoading(false);
+      setUploadProgress(0);
+    }
   };
 
   return (
@@ -78,10 +110,13 @@ const AddAlbumFromSpotifyDialog = () => {
               onChange={(e) => setSpotifyAlbumUrl(e.target.value)}
               className="bg-zinc-800 border-zinc-700"
               placeholder={t("admin.albums.placeholderSpotifyUrl")}
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="albumAudioZip">{t("admin.albums.fieldZip")}</Label>
+            <Label htmlFor="albumAudioZip">
+              {t("admin.albums.fieldZipOptional")}
+            </Label>
             <input
               type="file"
               ref={fileInputRef}
@@ -89,10 +124,11 @@ const AddAlbumFromSpotifyDialog = () => {
               accept=".zip"
               className="hidden"
               id="albumAudioZip"
+              disabled={isLoading}
             />
             <div
               className="flex items-center justify-center p-6 border-2 border-dashed border-zinc-700 rounded-lg cursor-pointer transition-colors hover:border-zinc-500"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => !isLoading && fileInputRef.current?.click()}
             >
               <div className="text-center">
                 <div className="p-3 bg-zinc-800 rounded-full inline-block mb-2">
@@ -101,7 +137,7 @@ const AddAlbumFromSpotifyDialog = () => {
                 <div className="text-sm text-zinc-400 mb-2">
                   {albumAudioZip
                     ? albumAudioZip.name
-                    : t("admin.albums.zipPrompt")}
+                    : t("admin.albums.zipPromptOptional")}
                 </div>
                 <Button
                   variant="outline"
@@ -111,6 +147,7 @@ const AddAlbumFromSpotifyDialog = () => {
                     e.stopPropagation();
                     fileInputRef.current?.click();
                   }}
+                  disabled={isLoading}
                 >
                   {t("admin.albums.chooseZip")}
                 </Button>
@@ -122,6 +159,7 @@ const AddAlbumFromSpotifyDialog = () => {
           <Button
             variant="outline"
             onClick={() => setDialogOpen(false)}
+            disabled={isLoading}
             className="text-zinc-200"
           >
             {t("admin.common.cancel")}
@@ -129,9 +167,20 @@ const AddAlbumFromSpotifyDialog = () => {
           <Button
             onClick={handleSubmit}
             className="bg-violet-500 hover:bg-violet-600 text-zinc-200 min-w-[120px]"
-            disabled={!spotifyAlbumUrl || !albumAudioZip}
+            disabled={isLoading || !spotifyAlbumUrl}
           >
-            В очередь
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <Loader2 className="animate-spin text-white size-4" />
+                <span>
+                  {albumAudioZip && uploadProgress < 100
+                    ? `${uploadProgress}%`
+                    : "Processing..."}
+                </span>
+              </div>
+            ) : (
+              t("admin.albums.add")
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
