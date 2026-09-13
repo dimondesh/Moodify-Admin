@@ -25,6 +25,7 @@ import {
 import { ScrollArea } from "../../components/ui/scroll-area";
 import { MultiSelect } from "../../components/ui/multi-select";
 import { Textarea } from "../../components/ui/textarea";
+import { Switch } from "../../components/ui/switch";
 import { Song, Artist, Genre, Mood } from "../../types";
 import { useTranslation } from "react-i18next";
 
@@ -54,6 +55,9 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
     title: song.title,
     albumId: song.albumId || "none",
     lyrics: song.lyrics || "",
+    discNumber: song.discNumber ?? 1,
+    trackNumber: song.trackNumber ?? "",
+    explicit: Boolean(song.explicit),
   });
 
   const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>(
@@ -90,6 +94,9 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
         title: song.title,
         albumId: song.albumId || "none",
         lyrics: song.lyrics || "",
+        discNumber: song.discNumber ?? 1,
+        trackNumber: song.trackNumber ?? "",
+        explicit: Boolean(song.explicit),
       });
       setSelectedArtistIds(
         song.artist.map((artist: Artist | string) =>
@@ -154,9 +161,17 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
       formData.append("lyrics", currentSongData.lyrics || "");
       formData.append("genreIds", JSON.stringify(selectedGenreIds));
       formData.append("moodIds", JSON.stringify(selectedMoodIds));
+      formData.append("explicit", String(currentSongData.explicit));
 
       if (currentSongData.albumId && currentSongData.albumId !== "none") {
         formData.append("albumId", currentSongData.albumId);
+        formData.append("discNumber", String(currentSongData.discNumber || 1));
+        if (
+          currentSongData.trackNumber !== "" &&
+          currentSongData.trackNumber != null
+        ) {
+          formData.append("trackNumber", String(currentSongData.trackNumber));
+        }
       } else {
         formData.append("albumId", "");
       }
@@ -361,6 +376,66 @@ const EditSongDialogComponent = ({ song }: EditSongDialogProps) => {
               </Select>
             </div>
           </ScrollArea>
+
+          {isAlbumSelected && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">
+                  {t("admin.songs.fieldDiscNumber")}
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={currentSongData.discNumber}
+                  onChange={(e) =>
+                    setCurrentSongData({
+                      ...currentSongData,
+                      discNumber: parseInt(e.target.value, 10) || 1,
+                    })
+                  }
+                  className="bg-zinc-800 border-zinc-700 text-zinc-400"
+                  placeholder={t("admin.songs.placeholderDiscNumber")}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">
+                  {t("admin.songs.fieldTrackNumber")}
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={currentSongData.trackNumber}
+                  onChange={(e) =>
+                    setCurrentSongData({
+                      ...currentSongData,
+                      trackNumber: e.target.value,
+                    })
+                  }
+                  className="bg-zinc-800 border-zinc-700 text-zinc-400"
+                  placeholder={t("admin.songs.placeholderTrackNumber")}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-3 rounded-md border border-zinc-700 bg-zinc-800/50 px-3 py-2">
+            <label
+              htmlFor="edit-song-explicit"
+              className="text-sm font-medium text-white"
+            >
+              {t("admin.songs.fieldExplicit")}
+            </label>
+            <Switch
+              id="edit-song-explicit"
+              checked={currentSongData.explicit}
+              onCheckedChange={(checked) =>
+                setCurrentSongData({
+                  ...currentSongData,
+                  explicit: checked,
+                })
+              }
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">

@@ -25,6 +25,7 @@ import {
 import { ScrollArea } from "../../components/ui/scroll-area";
 import { MultiSelect } from "../../components/ui/multi-select";
 import { Textarea } from "../../components/ui/textarea";
+import { Switch } from "../../components/ui/switch";
 import { useTranslation } from "react-i18next";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -36,6 +37,9 @@ interface NewSong {
   lyrics: string;
   genreIds: string[];
   moodIds: string[];
+  discNumber: number;
+  trackNumber: string;
+  explicit: boolean;
 }
 
 const AddSongDialog = () => {
@@ -58,7 +62,7 @@ const AddSongDialog = () => {
   const [selectedGenreIds, setSelectedGenreIds] = useState<string[]>([]);
   const [selectedMoodIds, setSelectedMoodIds] = useState<string[]>([]);
 
-  const [newSong, setNewSong] = useState<NewSong>({
+  const emptySong = (): NewSong => ({
     title: "",
     artistIds: [],
     album: "",
@@ -66,7 +70,12 @@ const AddSongDialog = () => {
     lyrics: "",
     genreIds: [],
     moodIds: [],
+    discNumber: 1,
+    trackNumber: "",
+    explicit: false,
   });
+
+  const [newSong, setNewSong] = useState<NewSong>(emptySong);
 
   const [files, setFiles] = useState<{
     audioFile: File | null; // MODIFIED
@@ -111,8 +120,13 @@ const AddSongDialog = () => {
       formData.append("moodIds", JSON.stringify(selectedMoodIds));
       if (newSong.album && newSong.album !== "none") {
         formData.append("albumId", newSong.album);
+        formData.append("discNumber", String(newSong.discNumber || 1));
+        if (newSong.trackNumber.trim()) {
+          formData.append("trackNumber", newSong.trackNumber.trim());
+        }
       }
       formData.append("releaseYear", newSong.releaseYear.toString());
+      formData.append("explicit", String(newSong.explicit));
       if (newSong.lyrics) {
         formData.append("lyrics", newSong.lyrics);
       }
@@ -123,15 +137,7 @@ const AddSongDialog = () => {
 
       await axiosInstance.post("/admin/songs", formData);
 
-      setNewSong({
-        title: "",
-        artistIds: [],
-        album: "",
-        releaseYear: new Date().getFullYear(),
-        lyrics: "",
-        genreIds: [],
-        moodIds: [],
-      });
+      setNewSong(emptySong());
       setSelectedArtistIds([]);
       setFiles({
         audioFile: null, // MODIFIED
@@ -360,6 +366,63 @@ const AddSongDialog = () => {
             </div>
           </ScrollArea>
 
+          {isAlbumSelected && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">
+                  {t("admin.songs.fieldDiscNumber")}
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={newSong.discNumber}
+                  onChange={(e) =>
+                    setNewSong({
+                      ...newSong,
+                      discNumber: parseInt(e.target.value, 10) || 1,
+                    })
+                  }
+                  className="bg-zinc-800 border-zinc-700 text-zinc-400"
+                  placeholder={t("admin.songs.placeholderDiscNumber")}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-white">
+                  {t("admin.songs.fieldTrackNumber")}
+                </label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={newSong.trackNumber}
+                  onChange={(e) =>
+                    setNewSong({
+                      ...newSong,
+                      trackNumber: e.target.value,
+                    })
+                  }
+                  className="bg-zinc-800 border-zinc-700 text-zinc-400"
+                  placeholder={t("admin.songs.placeholderTrackNumber")}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-3 rounded-md border border-zinc-700 bg-zinc-800/50 px-3 py-2">
+            <label
+              htmlFor="add-song-explicit"
+              className="text-sm font-medium text-white"
+            >
+              {t("admin.songs.fieldExplicit")}
+            </label>
+            <Switch
+              id="add-song-explicit"
+              checked={newSong.explicit}
+              onCheckedChange={(checked) =>
+                setNewSong({ ...newSong, explicit: checked })
+              }
+            />
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium text-white">
               {t("admin.songs.fieldLyricsOptional")}
@@ -380,15 +443,7 @@ const AddSongDialog = () => {
             variant="outline"
             onClick={() => {
               setSongDialogOpen(false);
-              setNewSong({
-                title: "",
-                artistIds: [],
-                album: "",
-                releaseYear: new Date().getFullYear(),
-                lyrics: "",
-                genreIds: [],
-                moodIds: [],
-              });
+              setNewSong(emptySong());
               setSelectedArtistIds([]);
               setFiles({
                 audioFile: null,
