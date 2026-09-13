@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminPage/AddAlbumDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Plus, Upload } from "lucide-react";
 import { useRef, useState, useEffect } from "react";

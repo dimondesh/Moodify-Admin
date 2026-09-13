@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminPage/PaginationControls.tsx
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";

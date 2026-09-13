@@ -1,5 +1,3 @@
-// frontend/src/pages/AdminPage/SongsTable.tsx
-
 import { memo, useEffect, useState } from "react";
 import {
   Table,
@@ -16,7 +14,7 @@ import EditSongDialog from "./EditSongDialog";
 import { Calendar, Trash2 } from "lucide-react";
 import { Artist } from "@/types";
 import { useTranslation } from "react-i18next";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "@/components/PaginationControls";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const SongsTable = memo(() => {

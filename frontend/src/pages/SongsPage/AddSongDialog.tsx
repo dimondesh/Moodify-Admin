@@ -1,4 +1,3 @@
-// moodify-admin-frontend/src/pages/AdminPage/AddSongDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import toast from "react-hot-toast";
 import { useMusicStore } from "../../stores/useMusicStore";

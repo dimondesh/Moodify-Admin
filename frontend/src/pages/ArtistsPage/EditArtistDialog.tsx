@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminPage/EditArtistDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Upload } from "lucide-react";
 import { useRef, useState, useEffect } from "react";

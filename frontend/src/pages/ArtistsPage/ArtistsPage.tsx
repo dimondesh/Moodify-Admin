@@ -1,12 +1,10 @@
-// frontend/src/pages/AdminPage/ArtistsTabContent.tsx
-
 import { Users2 } from "lucide-react";
 import AddArtistDialog from "./AddArtistDialog";
 
 import ArtistsTable from "./ArtistsTable";
 import { useTranslation } from "react-i18next";
 
-const ArtistsTabContent = () => {
+const ArtistsPage = () => {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">
@@ -27,4 +25,4 @@ const ArtistsTabContent = () => {
   );
 };
 
-export default ArtistsTabContent;
+export default ArtistsPage;

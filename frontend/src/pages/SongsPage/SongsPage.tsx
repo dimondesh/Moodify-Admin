@@ -1,12 +1,10 @@
-// frontend/src/pages/AdminPage/SongsTabContent.tsx
-
 import { Music } from "lucide-react";
 
 import SongsTable from "./SongsTable";
 import AddSongDialog from "./AddSongDialog";
 import { useTranslation } from "react-i18next";
 
-const SongsTabContent = () => {
+const SongsPage = () => {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">
@@ -27,4 +25,4 @@ const SongsTabContent = () => {
   );
 };
 
-export default SongsTabContent;
+export default SongsPage;

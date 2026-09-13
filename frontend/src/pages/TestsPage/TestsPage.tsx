@@ -21,7 +21,7 @@ import { axiosInstance } from "@/lib/axios";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const TestsTabContent = () => {
+const TestsPage = () => {
   const { t } = useTranslation();
   const [activeTest, setActiveTest] = useState<"analysis" | "embedding" | null>(
     null,
@@ -127,7 +127,7 @@ const TestsTabContent = () => {
         open={activeTest !== null}
         onOpenChange={(open) => !open && setActiveTest(null)}
       >
-        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 max-w-2xl">
+        <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {activeTest === "analysis" ? (
@@ -287,4 +287,4 @@ const TestsTabContent = () => {
   );
 };
 
-export default TestsTabContent;
+export default TestsPage;

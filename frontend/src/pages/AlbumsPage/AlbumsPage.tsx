@@ -1,5 +1,3 @@
-// frontend/src/pages/AdminPage/AlbumsTabContent.tsx
-
 import { Library } from "lucide-react";
 import AddAlbumDialog from "./AddAlbumDialog";
 import AddAlbumFromSpotifyDialog from "./AddAlbumFromSpotifyDialog";
@@ -7,7 +5,7 @@ import AddAlbumFromSpotifyDialog from "./AddAlbumFromSpotifyDialog";
 import AlbumsTable from "./AlbumsTable";
 import { useTranslation } from "react-i18next";
 
-const AlbumsTabContent = () => {
+const AlbumsPage = () => {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">
@@ -30,4 +28,4 @@ const AlbumsTabContent = () => {
     </div>
   );
 };
-export default AlbumsTabContent;
+export default AlbumsPage;

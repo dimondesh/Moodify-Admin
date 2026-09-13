@@ -1,5 +1,3 @@
-// frontend/src/pages/AdminPage/ArtistsTable.tsx
-
 import { Music, Trash2, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -15,7 +13,7 @@ import { useMusicStore } from "../../stores/useMusicStore";
 import { Artist } from "../../types";
 import EditArtistDialog from "./EditArtistDialog";
 import { useTranslation } from "react-i18next";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "@/components/PaginationControls";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const ArtistsTable = () => {

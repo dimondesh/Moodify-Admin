@@ -1,4 +1,3 @@
-// frontend/src/pages/AdminPage/EditAlbumDialog.tsx
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pencil, Upload } from "lucide-react";
 import { useRef, useState, useEffect } from "react";

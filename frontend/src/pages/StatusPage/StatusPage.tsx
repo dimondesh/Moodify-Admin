@@ -10,7 +10,7 @@ import DashboardStats from "./DashboardStats";
 
 type ServiceStatus = "idle" | "checking" | "online" | "offline";
 
-const StatusTabContent = () => {
+const StatusPage = () => {
   const { t } = useTranslation();
   const [mainBackendStatus, setMainBackendStatus] =
     useState<ServiceStatus>("idle");
@@ -206,4 +206,4 @@ const StatusTabContent = () => {
   );
 };
 
-export default StatusTabContent;
+export default StatusPage;

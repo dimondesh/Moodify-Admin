@@ -1,5 +1,3 @@
-// frontend/src/pages/AdminPage/AlbumsTable.tsx
-
 import { Calendar, Music, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -15,7 +13,7 @@ import { useMusicStore } from "../../stores/useMusicStore";
 import { Artist } from "../../types";
 import EditAlbumDialog from "./EditAlbumDialog";
 import { useTranslation } from "react-i18next";
-import PaginationControls from "./PaginationControls";
+import PaginationControls from "@/components/PaginationControls";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const AlbumsTable = () => {
