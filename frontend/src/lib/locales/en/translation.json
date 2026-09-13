@@ -705,7 +705,8 @@
       "offline": "Offline",
       "checking": "Checking...",
       "idle": "Idle",
-      "dbStatsTitle": "Database Statistics"
+      "dbStatsTitle": "Database Statistics",
+      "dbStatsDescription": "Overview of catalog and user counts."
     },
     "unauthorized": "Unauthorized",
     "loginTitle": "Sign in — Moodify Admin",
@@ -714,8 +715,8 @@
     "accessDeniedDescription": "This account does not have administrator rights. Sign in with another email or contact the project owner.",
     "tryAnotherAccount": "Sign in with another account",
     "backToHome": "Back to Home",
-    "title": "Music Manager",
-    "description": "Manage your music catalog",
+    "title": "Moodify",
+    "description": "Moodify",
     "tabs": {
       "songs": "Songs",
       "albums": "Albums",

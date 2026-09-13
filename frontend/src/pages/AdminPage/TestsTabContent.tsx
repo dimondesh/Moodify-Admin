@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Activity,
   Fingerprint,
@@ -17,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -69,52 +69,54 @@ const TestsTabContent = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Карточка Теста Анализа */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card
-          className="cursor-pointer hover:bg-zinc-800/50 transition-colors border-zinc-800"
+          className="cursor-pointer border-[#2a2a2a] bg-[#1a1a1a] transition-colors hover:bg-[#2a2a2a]"
           onClick={() => {
             setActiveTest("analysis");
             setResult(null);
             setFile(null);
           }}
         >
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-white">
               {t("admin.tests.titleAnalysis")}
             </CardTitle>
-            <Activity className="h-4 w-4 text-emerald-500" />
+            <div className="rounded-lg bg-emerald-500/10 p-2">
+              <Activity className="h-4 w-4 text-emerald-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {t("admin.tests.descAnalysis")}
             </div>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="mt-1 text-xs text-gray-400">
               {t("admin.tests.subDescAnalysis")}
             </p>
           </CardContent>
         </Card>
 
-        {/* Карточка Теста Эмбеддингов */}
         <Card
-          className="cursor-pointer hover:bg-zinc-800/50 transition-colors border-zinc-800"
+          className="cursor-pointer border-[#2a2a2a] bg-[#1a1a1a] transition-colors hover:bg-[#2a2a2a]"
           onClick={() => {
             setActiveTest("embedding");
             setResult(null);
             setFile(null);
           }}
         >
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-white">
               {t("admin.tests.titleEmbedding")}
             </CardTitle>
-            <Fingerprint className="h-4 w-4 text-sky-500" />
+            <div className="rounded-lg bg-sky-500/10 p-2">
+              <Fingerprint className="h-4 w-4 text-sky-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {t("admin.tests.descEmbedding")}
             </div>
-            <p className="text-xs text-zinc-400 mt-1">
+            <p className="mt-1 text-xs text-gray-400">
               {t("admin.tests.subDescEmbedding")}
             </p>
           </CardContent>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { axiosInstance } from "@/lib/axios";
+import DashboardStats from "./DashboardStats";
 
 type ServiceStatus = "idle" | "checking" | "online" | "offline";
 
@@ -92,90 +93,107 @@ const StatusTabContent = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-          <Activity className="h-5 w-5 hidden sm:block text-red-500" />
-          {t("admin.status.title")}
-        </h2>
-        <p className="text-gray-400 text-sm mt-1">
-          {t("admin.status.description")}
-        </p>
-      </div>
+    <div className="space-y-10">
+      <section className="space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+            <Activity className="hidden h-5 w-5 text-red-500 sm:block" />
+            {t("admin.status.dbStatsTitle")}
+          </h2>
+          <p className="mt-1 text-sm text-gray-400">
+            {t("admin.status.dbStatsDescription")}
+          </p>
+        </div>
+        <DashboardStats />
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("admin.status.backendStatus")}
-            </CardTitle>
-            <Cloud className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between gap-4">
-              <StatusBadge status={mainBackendStatus} />
-              <Button
-                onClick={checkMainBackendStatus}
-                disabled={mainBackendStatus === "checking"}
-              >
-                <Power className="mr-2 h-4 w-4" />
-                {t("admin.status.wakeUpButton")}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              {t("admin.status.wakeUpDescription")}
-            </p>
-          </CardContent>
-        </Card>
+      <div className="border-t border-[#2a2a2a]" />
 
-        <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {t("admin.status.analysisServiceStatus")}
-            </CardTitle>
-            <BrainCircuit className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between gap-4">
-              <StatusBadge status={analysisServiceStatus} />
-              <Button
-                onClick={checkAnalysisServiceStatus}
-                disabled={analysisServiceStatus === "checking"}
-              >
-                <Power className="mr-2 h-4 w-4" />
-                {t("admin.status.wakeUpButton")}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              {t("admin.status.wakeUpDescription")}
-            </p>
-          </CardContent>
-        </Card>
+      <section className="space-y-4">
+        <div>
+          <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+            <Cloud className="hidden h-5 w-5 text-sky-500 sm:block" />
+            {t("admin.status.title")}
+          </h2>
+          <p className="mt-1 text-sm text-gray-400">
+            {t("admin.status.description")}
+          </p>
+        </div>
 
-        <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Embedding Service
-            </CardTitle>
-            <Cpu className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between gap-4">
-              <StatusBadge status={embeddingServiceStatus} />
-              <Button
-                onClick={checkEmbeddingServiceStatus}
-                disabled={embeddingServiceStatus === "checking"}
-              >
-                <Power className="mr-2 h-4 w-4" />
-                {t("admin.status.wakeUpButton")}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              {t("admin.status.wakeUpDescription")}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t("admin.status.backendStatus")}
+              </CardTitle>
+              <Cloud className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between gap-4">
+                <StatusBadge status={mainBackendStatus} />
+                <Button
+                  onClick={checkMainBackendStatus}
+                  disabled={mainBackendStatus === "checking"}
+                >
+                  <Power className="mr-2 h-4 w-4" />
+                  {t("admin.status.wakeUpButton")}
+                </Button>
+              </div>
+              <p className="pt-2 text-xs text-muted-foreground">
+                {t("admin.status.wakeUpDescription")}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {t("admin.status.analysisServiceStatus")}
+              </CardTitle>
+              <BrainCircuit className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between gap-4">
+                <StatusBadge status={analysisServiceStatus} />
+                <Button
+                  onClick={checkAnalysisServiceStatus}
+                  disabled={analysisServiceStatus === "checking"}
+                >
+                  <Power className="mr-2 h-4 w-4" />
+                  {t("admin.status.wakeUpButton")}
+                </Button>
+              </div>
+              <p className="pt-2 text-xs text-muted-foreground">
+                {t("admin.status.wakeUpDescription")}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-[#1a1a1a] border-[#2a2a2a]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Embedding Service
+              </CardTitle>
+              <Cpu className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between gap-4">
+                <StatusBadge status={embeddingServiceStatus} />
+                <Button
+                  onClick={checkEmbeddingServiceStatus}
+                  disabled={embeddingServiceStatus === "checking"}
+                >
+                  <Power className="mr-2 h-4 w-4" />
+                  {t("admin.status.wakeUpButton")}
+                </Button>
+              </div>
+              <p className="pt-2 text-xs text-muted-foreground">
+                {t("admin.status.wakeUpDescription")}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 };
