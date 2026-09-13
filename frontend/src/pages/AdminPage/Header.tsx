@@ -14,6 +14,7 @@ import {
 } from "../../components/ui/dropdown-menu";
 import { LogOut, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { CDN_DEFAULT_USER_IMAGE } from "../../lib/cdn";
 
 const Header = () => {
   const { t, i18n } = useTranslation();
@@ -68,7 +69,7 @@ const Header = () => {
               className="relative h-8 w-8 rounded-full hover:bg-[#2a2a2a]"
             >
               <img
-                src={user.imageUrl || "/Moodify.png"}
+                src={user.imageUrl || CDN_DEFAULT_USER_IMAGE}
                 alt="User Avatar"
                 className="w-8 h-8 rounded-full object-cover"
               />
