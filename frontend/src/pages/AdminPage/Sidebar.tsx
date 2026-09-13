@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,11 +25,12 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "../../components/ui/sheet";
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../../components/ui/drawer";
 import { CDN_DEFAULT_USER_IMAGE } from "../../lib/cdn";
 import { cn } from "../../lib/utils";
 
@@ -95,6 +96,8 @@ const NAV_ITEMS: NavItem[] = [
 type SidebarProps = {
   active: AdminSection;
   onNavigate: (section: AdminSection) => void;
+  mobileOpen: boolean;
+  onMobileOpenChange: (open: boolean) => void;
 };
 
 function Brand() {
@@ -262,52 +265,60 @@ function UserMenu() {
   );
 }
 
-const Sidebar = ({ active, onNavigate }: SidebarProps) => {
+const Sidebar = ({
+  active,
+  onNavigate,
+  mobileOpen,
+  onMobileOpenChange,
+}: SidebarProps) => {
   const { t } = useTranslation();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNavigate = (section: AdminSection) => {
     onNavigate(section);
-    setMobileOpen(false);
+    onMobileOpenChange(false);
   };
 
   return (
     <>
       <header className="flex shrink-0 items-center justify-between border-b border-[#2a2a2a] bg-[#0f0f0f] px-4 py-3 md:hidden">
         <Brand />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="text-gray-300 hover:bg-[#2a2a2a] hover:text-white"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
+        <Drawer
+          direction="left"
+          open={mobileOpen}
+          onOpenChange={onMobileOpenChange}
         >
-          <Menu className="size-5" />
-        </Button>
+          <DrawerTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="text-gray-400 hover:bg-[#2a2a2a] hover:text-white"
+              aria-label="Open menu"
+            >
+              <Menu className="size-5" />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent
+            className="h-full w-56 border-r-[#2a2a2a] bg-[#0f0f0f] p-0 text-white sm:max-w-56"
+            aria-describedby={undefined}
+          >
+            <DrawerHeader className="border-b border-[#2a2a2a] px-4 py-4 text-left">
+              <DrawerTitle className="sr-only">{t("admin.title")}</DrawerTitle>
+              <Link to="/" className="hover-brightness w-fit">
+                <img
+                  src="/Moodify-transparent.svg"
+                  alt="Moodify"
+                  className="size-9"
+                />
+              </Link>
+            </DrawerHeader>
+            <div className="flex min-h-0 flex-1 flex-col">
+              <NavLinks active={active} onNavigate={handleNavigate} />
+              <UserMenu />
+            </div>
+          </DrawerContent>
+        </Drawer>
       </header>
-
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent
-          side="left"
-          className="w-72 border-[#2a2a2a] bg-[#0f0f0f] p-0 text-white [&>button]:text-gray-400"
-        >
-          <SheetHeader className="border-b border-[#2a2a2a] px-4 py-4 text-left">
-            <SheetTitle className="sr-only">{t("admin.title")}</SheetTitle>
-            <Link to="/" className="hover-brightness w-fit">
-              <img
-                src="/Moodify-transparent.svg"
-                alt="Moodify"
-                className="size-9"
-              />
-            </Link>
-          </SheetHeader>
-          <div className="flex h-[calc(100%-4.5rem)] flex-col">
-            <NavLinks active={active} onNavigate={handleNavigate} />
-            <UserMenu />
-          </div>
-        </SheetContent>
-      </Sheet>
 
       <aside className="hidden h-full w-56 shrink-0 flex-col border-r border-[#2a2a2a] bg-[#0f0f0f] md:flex">
         <div className="border-b border-[#2a2a2a] px-4 py-4">
