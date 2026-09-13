@@ -76,20 +76,28 @@ const StatusTabContent = () => {
   }, []);
 
   const StatusBadge = ({ status }: { status: ServiceStatus }) => {
-    switch (status) {
-      case "online":
-        return (
-          <Badge className="bg-green-500 hover:bg-green-600">
-            {t("admin.status.online")}
-          </Badge>
-        );
-      case "offline":
-        return <Badge variant="destructive">{t("admin.status.offline")}</Badge>;
-      case "checking":
-        return <Badge variant="secondary">{t("admin.status.checking")}</Badge>;
-      default:
-        return <Badge variant="outline">{t("admin.status.idle")}</Badge>;
-    }
+    const styles: Record<ServiceStatus, string> = {
+      online:
+        "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15",
+      offline:
+        "border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/15",
+      checking:
+        "border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/15",
+      idle: "border-zinc-500/30 bg-zinc-500/10 text-zinc-400 hover:bg-zinc-500/15",
+    };
+
+    const labels: Record<ServiceStatus, string> = {
+      online: t("admin.status.online"),
+      offline: t("admin.status.offline"),
+      checking: t("admin.status.checking"),
+      idle: t("admin.status.idle"),
+    };
+
+    return (
+      <Badge variant="outline" className={styles[status]}>
+        {labels[status]}
+      </Badge>
+    );
   };
 
   return (
