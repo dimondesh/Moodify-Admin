@@ -1,9 +1,11 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { LayoutGroup, motion } from "framer-motion";
 import {
   Activity,
   Album,
+  ChevronDown,
   FlaskConical,
   Languages,
   LogOut,
@@ -15,87 +17,67 @@ import {
 import { useAuthStore } from "../../stores/useAuthStore";
 import { Button } from "../../components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
-import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "../../components/ui/drawer";
-import { CDN_DEFAULT_USER_IMAGE } from "../../lib/cdn";
 import { cn } from "../../lib/utils";
 
-export type AdminSection =
-  | "status"
-  | "songs"
-  | "albums"
-  | "artists"
-  | "tests";
-
 type NavItem = {
-  id: AdminSection;
+  path: string;
   labelKey: string;
   icon: LucideIcon;
   iconActive: string;
   iconHover: string;
-  bar: string;
+  barColor: string;
 };
 
 const NAV_ITEMS: NavItem[] = [
   {
-    id: "status",
+    path: "/status",
     labelKey: "admin.tabs.status",
     icon: Activity,
     iconActive: "text-red-500",
     iconHover: "group-hover:text-red-500",
-    bar: "bg-red-500",
+    barColor: "#ef4444",
   },
   {
-    id: "songs",
+    path: "/songs",
     labelKey: "admin.tabs.songs",
     icon: Music,
     iconActive: "text-emerald-500",
     iconHover: "group-hover:text-emerald-500",
-    bar: "bg-emerald-500",
+    barColor: "#10b981",
   },
   {
-    id: "albums",
+    path: "/albums",
     labelKey: "admin.tabs.albums",
     icon: Album,
     iconActive: "text-violet-500",
     iconHover: "group-hover:text-violet-500",
-    bar: "bg-violet-500",
+    barColor: "#8b5cf6",
   },
   {
-    id: "artists",
+    path: "/artists",
     labelKey: "admin.tabs.artists",
     icon: Users2,
     iconActive: "text-orange-500",
     iconHover: "group-hover:text-orange-500",
-    bar: "bg-orange-500",
+    barColor: "#f97316",
   },
   {
-    id: "tests",
+    path: "/tests",
     labelKey: "admin.tabs.tests",
     icon: FlaskConical,
     iconActive: "text-sky-500",
     iconHover: "group-hover:text-sky-500",
-    bar: "bg-sky-500",
+    barColor: "#0ea5e9",
   },
 ];
 
 type SidebarProps = {
-  active: AdminSection;
-  onNavigate: (section: AdminSection) => void;
   mobileOpen: boolean;
   onMobileOpenChange: (open: boolean) => void;
 };
@@ -104,7 +86,7 @@ function Brand() {
   const { t } = useTranslation();
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <Link to="/" className="hover-brightness shrink-0">
+      <Link to="/status" className="hover-brightness shrink-0">
         <img src="/Moodify-transparent.svg" alt="Moodify" className="size-9" />
       </Link>
       <h1 className="hidden truncate text-base font-semibold text-white md:block">
@@ -115,59 +97,72 @@ function Brand() {
 }
 
 function NavLinks({
-  active,
   onNavigate,
+  scope,
 }: {
-  active: AdminSection;
-  onNavigate: (section: AdminSection) => void;
+  onNavigate?: () => void;
+  scope: "mobile" | "desktop";
 }) {
   const { t } = useTranslation();
   return (
-    <nav className="flex flex-1 flex-col gap-1 p-2">
-      {NAV_ITEMS.map(
-        ({ id, labelKey, icon: Icon, iconActive, iconHover, bar }) => {
-          const isActive = active === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onNavigate(id)}
-              className={cn(
-                "group relative flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors",
-                isActive
-                  ? "bg-white/5 text-white"
-                  : "text-gray-400 hover:bg-white/5 hover:text-white",
-              )}
+    <LayoutGroup id={`sidebar-nav-${scope}`}>
+      <nav className="flex flex-1 flex-col gap-1 p-2">
+        {NAV_ITEMS.map(
+          ({ path, labelKey, icon: Icon, iconActive, iconHover, barColor }) => (
+            <NavLink
+              key={path}
+              to={path}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                cn(
+                  "group relative flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors",
+                  isActive
+                    ? "bg-white/5 text-white"
+                    : "text-gray-400 hover:bg-white/5 hover:text-white",
+                )
+              }
             >
-              {isActive && (
-                <span
-                  className={cn(
-                    "absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full",
-                    bar,
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.span
+                      layoutId={`sidebar-active-bar-${scope}`}
+                      className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full"
+                      initial={false}
+                      animate={{ backgroundColor: barColor }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 420,
+                        damping: 34,
+                        backgroundColor: { duration: 0.25 },
+                      }}
+                    />
                   )}
-                />
+                  <span className="flex size-8 shrink-0 items-center justify-center">
+                    <Icon
+                      className={cn(
+                        "size-5 transition-colors duration-200",
+                        isActive
+                          ? iconActive
+                          : cn("text-gray-500", iconHover),
+                      )}
+                    />
+                  </span>
+                  <span>{t(labelKey)}</span>
+                </>
               )}
-              <span className="flex size-8 shrink-0 items-center justify-center">
-                <Icon
-                  className={cn(
-                    "size-5 transition-colors",
-                    isActive ? iconActive : cn("text-gray-500", iconHover),
-                  )}
-                />
-              </span>
-              <span>{t(labelKey)}</span>
-            </button>
-          );
-        },
-      )}
-    </nav>
+            </NavLink>
+          ),
+        )}
+      </nav>
+    </LayoutGroup>
   );
 }
 
-function UserMenu() {
+function SidebarActions() {
   const { t, i18n } = useTranslation();
-  const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const [langOpen, setLangOpen] = useState(false);
 
   useEffect(() => {
     const savedLang = localStorage.getItem("i18nextLng");
@@ -175,8 +170,6 @@ function UserMenu() {
       i18n.changeLanguage(savedLang);
     }
   }, [i18n]);
-
-  if (!user) return null;
 
   const availableLanguages = [
     { code: "en", name: t("topbar.languages.en"), flag: "🇬🇧" },
@@ -195,88 +188,74 @@ function UserMenu() {
   };
 
   return (
-    <div className="border-t border-[#2a2a2a] p-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="h-auto w-full justify-start gap-3 rounded-lg px-2 py-2 hover:bg-[#2a2a2a]"
-          >
-            <img
-              src={user.imageUrl || CDN_DEFAULT_USER_IMAGE}
-              alt=""
-              className="size-8 shrink-0 rounded-full object-cover"
-            />
-            {user.fullName ? (
-              <span className="min-w-0 truncate text-sm text-white">
-                {user.fullName}
-              </span>
-            ) : null}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-48 border-[#2a2a2a] bg-[#1a1a1a] p-1 text-white"
-          side="right"
-          align="end"
+    <div className="flex flex-col gap-1 border-t border-[#2a2a2a] p-2">
+      <div>
+        <button
+          type="button"
+          onClick={() => setLangOpen((open) => !open)}
+          aria-expanded={langOpen}
+          className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
         >
-          {user.fullName && (
-            <DropdownMenuItem className="cursor-default p-2 text-sm font-semibold text-white opacity-100 hover:bg-[#2a2a2a]">
-              {user.fullName}
-            </DropdownMenuItem>
-          )}
+          <span className="flex size-8 shrink-0 items-center justify-center">
+            <Languages className="size-5" />
+          </span>
+          <span className="flex-1 text-left text-sm">{t("topbar.language")}</span>
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 transition-transform duration-200",
+              langOpen && "rotate-180",
+            )}
+          />
+        </button>
+        <motion.div
+          initial={false}
+          animate={{
+            height: langOpen ? "auto" : 0,
+            opacity: langOpen ? 1 : 0,
+          }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          className="overflow-hidden"
+        >
+          <div className="flex flex-col gap-1 py-1">
+            {availableLanguages.map((lang) => {
+              const isSelected = i18n.language.startsWith(lang.code);
+              return (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => handleChangeLanguage(lang.code)}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-white/5 hover:text-white",
+                    isSelected ? "text-violet-500" : "text-gray-400",
+                  )}
+                >
+                  <span className="flex size-8 shrink-0 items-center justify-center text-base">
+                    {lang.flag}
+                  </span>
+                  <span>{lang.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+      </div>
 
-          <DropdownMenuSeparator className="bg-[#2a2a2a]" />
-
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="cursor-pointer p-2 hover:bg-[#2a2a2a]">
-              <Languages className="mr-2 h-4 w-4" />
-              <span>{t("topbar.language")}</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="border-[#2a2a2a] bg-[#1a1a1a] p-1 text-white">
-              {availableLanguages.map((lang) => {
-                const isSelected = i18n.language.startsWith(lang.code);
-                return (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => handleChangeLanguage(lang.code)}
-                    className={`cursor-pointer p-2 hover:bg-[#2a2a2a] ${
-                      isSelected ? "text-violet-500" : ""
-                    }`}
-                  >
-                    <span>{`${lang.flag} ${lang.name}`}</span>
-                  </DropdownMenuItem>
-                );
-              })}
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-
-          <DropdownMenuSeparator className="bg-[#2a2a2a]" />
-
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="cursor-pointer p-2 text-red-400 hover:bg-[#2a2a2a] focus:bg-red-500/20 focus:text-red-400"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            {t("topbar.logout")}
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Button
+        variant="ghost"
+        onClick={handleLogout}
+        className="h-auto w-full justify-start gap-3 rounded-lg px-2 py-2 text-gray-400 hover:bg-white/5 hover:text-red-400"
+      >
+        <span className="flex size-8 shrink-0 items-center justify-center">
+          <LogOut className="size-5" />
+        </span>
+        <span className="text-sm">{t("topbar.logout")}</span>
+      </Button>
     </div>
   );
 }
 
-const Sidebar = ({
-  active,
-  onNavigate,
-  mobileOpen,
-  onMobileOpenChange,
-}: SidebarProps) => {
+const Sidebar = ({ mobileOpen, onMobileOpenChange }: SidebarProps) => {
   const { t } = useTranslation();
-
-  const handleNavigate = (section: AdminSection) => {
-    onNavigate(section);
-    onMobileOpenChange(false);
-  };
 
   return (
     <>
@@ -304,7 +283,7 @@ const Sidebar = ({
           >
             <DrawerHeader className="border-b border-[#2a2a2a] px-4 py-4 text-left">
               <DrawerTitle className="sr-only">{t("admin.title")}</DrawerTitle>
-              <Link to="/" className="hover-brightness w-fit">
+              <Link to="/status" className="hover-brightness w-fit">
                 <img
                   src="/Moodify-transparent.svg"
                   alt="Moodify"
@@ -313,8 +292,11 @@ const Sidebar = ({
               </Link>
             </DrawerHeader>
             <div className="flex min-h-0 flex-1 flex-col">
-              <NavLinks active={active} onNavigate={handleNavigate} />
-              <UserMenu />
+              <NavLinks
+                scope="mobile"
+                onNavigate={() => onMobileOpenChange(false)}
+              />
+              <SidebarActions />
             </div>
           </DrawerContent>
         </Drawer>
@@ -324,8 +306,8 @@ const Sidebar = ({
         <div className="border-b border-[#2a2a2a] px-4 py-4">
           <Brand />
         </div>
-        <NavLinks active={active} onNavigate={handleNavigate} />
-        <UserMenu />
+        <NavLinks scope="desktop" />
+        <SidebarActions />
       </aside>
     </>
   );

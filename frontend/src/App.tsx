@@ -2,6 +2,11 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./stores/useAuthStore";
 import AdminPage from "./pages/AdminPage/AdminPage";
+import StatusTabContent from "./pages/AdminPage/StatusTabContent";
+import SongsTabContent from "./pages/AdminPage/SongsTabContent";
+import AlbumsTabContent from "./pages/AdminPage/AlbumsTabContent";
+import ArtistsTabContent from "./pages/AdminPage/ArtistsTabContent";
+import TestsTabContent from "./pages/AdminPage/TestsTabContent";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import { JSX } from "react";
 
@@ -23,13 +28,21 @@ function App() {
       <Routes>
         <Route path="/login" element={<AuthPage />} />
         <Route
-          path="/*"
+          path="/"
           element={
             <ProtectedRoute>
               <AdminPage />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route index element={<Navigate to="/status" replace />} />
+          <Route path="status" element={<StatusTabContent />} />
+          <Route path="songs" element={<SongsTabContent />} />
+          <Route path="albums" element={<AlbumsTabContent />} />
+          <Route path="artists" element={<ArtistsTabContent />} />
+          <Route path="tests" element={<TestsTabContent />} />
+          <Route path="*" element={<Navigate to="/status" replace />} />
+        </Route>
       </Routes>
       <Toaster
         toastOptions={{
