@@ -30,6 +30,13 @@ const TestsPage = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
+  const closeDialog = () => {
+    setActiveTest(null);
+    setResult(null);
+    setFile(null);
+    setLoading(false);
+  };
+
   const handleRunTest = async () => {
     if (!file || !activeTest) return;
 
@@ -48,6 +55,7 @@ const TestsPage = () => {
       });
       setResult(response.data.data);
     } catch (error: any) {
+      if (error?.code === "ERR_CANCELED") return;
       console.error("Test failed", error);
       setResult({
         error: error.response?.data?.message || t("common.error"),
@@ -125,7 +133,7 @@ const TestsPage = () => {
 
       <Dialog
         open={activeTest !== null}
-        onOpenChange={(open) => !open && setActiveTest(null)}
+        onOpenChange={(open) => !open && closeDialog()}
       >
         <DialogContent className="bg-zinc-900 border-zinc-800 text-zinc-100 sm:max-w-2xl">
           <DialogHeader>
@@ -196,9 +204,15 @@ const TestsPage = () => {
               </Button>
             </div>
 
-            {result && (
+            {result && activeTest && (
               <ScrollArea className="h-[400px] w-full rounded-md border border-zinc-800 bg-black/50 p-4">
-                {activeTest === "analysis" && !result.error ? (
+                {result.error ? (
+                  <div className="flex flex-col items-center justify-center h-full text-red-400 p-6 bg-red-500/10 rounded-lg border border-red-500/20">
+                    <p className="text-sm font-medium text-center">
+                      {result.error}
+                    </p>
+                  </div>
+                ) : activeTest === "analysis" ? (
                   <div className="space-y-6">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800 flex flex-col items-center justify-center">
@@ -251,7 +265,7 @@ const TestsPage = () => {
                       </div>
                     </div>
                   </div>
-                ) : activeTest === "embedding" && !result.error ? (
+                ) : activeTest === "embedding" ? (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between bg-zinc-900/80 p-3 rounded-lg border border-zinc-800">
                       <p className="text-sm font-medium text-emerald-400 flex items-center gap-2">
@@ -271,13 +285,7 @@ const TestsPage = () => {
                       <span className="text-zinc-600">]</span>
                     </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-red-400 p-6 bg-red-500/10 rounded-lg border border-red-500/20">
-                    <p className="text-sm font-medium text-center">
-                      {result.error}
-                    </p>
-                  </div>
-                )}
+                ) : null}
               </ScrollArea>
             )}
           </div>
