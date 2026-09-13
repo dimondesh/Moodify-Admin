@@ -729,7 +729,38 @@
       "albums": "Альбоми",
       "artists": "Виконавці",
       "status": "Статус",
-      "tests": "Тести"
+      "tests": "Тести",
+      "embeddingsMap": "Карта ембедингів"
+    },
+    "embeddingsMap": {
+      "title": "Карта ембедингів",
+      "description": "Проекція PCA → t-SNE ембедингів. Треки забарвлені за жанром.",
+      "meta": "{{count}} шт. · {{dim}}D",
+      "entity": {
+        "tracks": "Треки",
+        "albums": "Альбоми",
+        "artists": "Артисти",
+        "playlists": "Плейлисти"
+      },
+      "entityArtists": "Артисти",
+      "colorByGenre": "Колір за жанром",
+      "colorByMood": "Колір за настроєм",
+      "colorByType": "Колір за типом",
+      "colorByArtist": "Колір за артистом",
+      "colorBySource": "Колір за джерелом",
+      "computing": "Рахуємо проєкцію…",
+      "empty": "Немає сутностей з ембедингами.",
+      "loadError": "Не вдалося завантажити карту ембедингів.",
+      "retry": "Повторити",
+      "refresh": "Оновити",
+      "genre": "Жанр",
+      "mood": "Настрій",
+      "type": "Тип",
+      "artist": "Артист",
+      "source": "Джерело",
+      "zoomIn": "Наблизити",
+      "zoomOut": "Віддалити",
+      "resetView": "Скинути"
     },
     "stats": {
       "totalSongs": "Всього треків",

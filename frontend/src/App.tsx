@@ -7,6 +7,7 @@ import SongsPage from "./pages/SongsPage/SongsPage";
 import AlbumsPage from "./pages/AlbumsPage/AlbumsPage";
 import ArtistsPage from "./pages/ArtistsPage/ArtistsPage";
 import TestsPage from "./pages/TestsPage/TestsPage";
+import EmbeddingsMapPage from "./pages/EmbeddingsMapPage/EmbeddingsMapPage";
 import AuthPage from "./pages/AuthPage/AuthPage";
 import { JSX } from "react";
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="albums" element={<AlbumsPage />} />
           <Route path="artists" element={<ArtistsPage />} />
           <Route path="tests" element={<TestsPage />} />
+          <Route path="embeddings-map" element={<EmbeddingsMapPage />} />
           <Route path="*" element={<Navigate to="/status" replace />} />
         </Route>
       </Routes>

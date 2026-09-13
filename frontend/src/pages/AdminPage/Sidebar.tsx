@@ -9,6 +9,7 @@ import {
   FlaskConical,
   Languages,
   LogOut,
+  Map,
   Menu,
   Music,
   Users2,
@@ -74,6 +75,14 @@ const NAV_ITEMS: NavItem[] = [
     iconActive: "text-sky-500",
     iconHover: "group-hover:text-sky-500",
     barColor: "#0ea5e9",
+  },
+  {
+    path: "/embeddings-map",
+    labelKey: "admin.tabs.embeddingsMap",
+    icon: Map,
+    iconActive: "text-fuchsia-500",
+    iconHover: "group-hover:text-fuchsia-500",
+    barColor: "#d946ef",
   },
 ];
 

@@ -729,7 +729,38 @@
       "albums": "Альбомы",
       "artists": "Исполнители",
       "status": "Статус",
-      "tests": "Тесты"
+      "tests": "Тесты",
+      "embeddingsMap": "Карта эмбеддингов"
+    },
+    "embeddingsMap": {
+      "title": "Карта эмбеддингов",
+      "description": "Проекция PCA → t-SNE эмбеддингов. Треки окрашены по жанру.",
+      "meta": "{{count}} шт. · {{dim}}D",
+      "entity": {
+        "tracks": "Треки",
+        "albums": "Альбомы",
+        "artists": "Артисты",
+        "playlists": "Плейлисты"
+      },
+      "entityArtists": "Артисты",
+      "colorByGenre": "Цвет по жанру",
+      "colorByMood": "Цвет по настроению",
+      "colorByType": "Цвет по типу",
+      "colorByArtist": "Цвет по артисту",
+      "colorBySource": "Цвет по источнику",
+      "computing": "Считаем проекцию…",
+      "empty": "Нет сущностей с эмбеддингами.",
+      "loadError": "Не удалось загрузить карту эмбеддингов.",
+      "retry": "Повторить",
+      "refresh": "Обновить",
+      "genre": "Жанр",
+      "mood": "Настроение",
+      "type": "Тип",
+      "artist": "Артист",
+      "source": "Источник",
+      "zoomIn": "Приблизить",
+      "zoomOut": "Отдалить",
+      "resetView": "Сброс"
     },
     "stats": {
       "totalSongs": "Всего треков",

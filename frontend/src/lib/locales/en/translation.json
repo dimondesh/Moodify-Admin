@@ -722,7 +722,38 @@
       "albums": "Albums",
       "artists": "Artists",
       "status": "Status",
-      "tests": "Tests"
+      "tests": "Tests",
+      "embeddingsMap": "Embeddings map"
+    },
+    "embeddingsMap": {
+      "title": "Embeddings map",
+      "description": "PCA → t-SNE projection of embeddings. Tracks are colored by genre.",
+      "meta": "{{count}} items · {{dim}}D",
+      "entity": {
+        "tracks": "Tracks",
+        "albums": "Albums",
+        "artists": "Artists",
+        "playlists": "Playlists"
+      },
+      "entityArtists": "Artists",
+      "colorByGenre": "Color by genre",
+      "colorByMood": "Color by mood",
+      "colorByType": "Color by type",
+      "colorByArtist": "Color by artist",
+      "colorBySource": "Color by source",
+      "computing": "Computing projection…",
+      "empty": "No items with embeddings found.",
+      "loadError": "Failed to load embedding map.",
+      "retry": "Retry",
+      "refresh": "Refresh",
+      "genre": "Genre",
+      "mood": "Mood",
+      "type": "Type",
+      "artist": "Artist",
+      "source": "Source",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "resetView": "Reset"
     },
     "tests": {
       "title": "Algorithm Testing",
