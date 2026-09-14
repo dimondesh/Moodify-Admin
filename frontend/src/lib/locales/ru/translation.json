@@ -860,7 +860,21 @@
       "tableArtists": "Исполнители",
       "tableReleaseYear": "Год выпуска",
       "tableSongs": "Треки",
-      "tableActions": "Действия"
+      "tableStatus": "Статус",
+      "tableActions": "Действия",
+      "statusQueued": "В очереди",
+      "statusPreparing": "Подготовка",
+      "statusDownloading": "Загрузка {{percent}}%",
+      "statusIngesting": "{{done}}/{{total}}",
+      "statusCompleted": "Готово",
+      "cancelUpload": "Отменить загрузку",
+      "cancelConfirmTitle": "Отменить загрузку альбома?",
+      "cancelConfirmDesc": "«{{title}}» будет убран из очереди. Уже скачанные треки будут удалены.",
+      "cancelConfirmAction": "Отменить загрузку",
+      "cancelSuccess": "Загрузка отменена",
+      "cancelFailed": "Не удалось отменить загрузку",
+      "queuedToast": "Альбом добавлен в очередь загрузки",
+      "queuing": "В очередь..."
     },
     "artists": {
       "title": "Библиотека исполнителей",

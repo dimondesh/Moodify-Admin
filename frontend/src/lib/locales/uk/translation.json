@@ -860,7 +860,21 @@
       "tableArtists": "Виконавці",
       "tableReleaseYear": "Рік випуску",
       "tableSongs": "Треки",
-      "tableActions": "Дії"
+      "tableStatus": "Статус",
+      "tableActions": "Дії",
+      "statusQueued": "У черзі",
+      "statusPreparing": "Підготовка",
+      "statusDownloading": "Завантаження {{percent}}%",
+      "statusIngesting": "{{done}}/{{total}}",
+      "statusCompleted": "Готово",
+      "cancelUpload": "Скасувати завантаження",
+      "cancelConfirmTitle": "Скасувати завантаження альбому?",
+      "cancelConfirmDesc": "«{{title}}» буде прибрано з черги. Вже завантажені треки будуть видалені.",
+      "cancelConfirmAction": "Скасувати завантаження",
+      "cancelSuccess": "Завантаження скасовано",
+      "cancelFailed": "Не вдалося скасувати завантаження",
+      "queuedToast": "Альбом додано до черги завантаження",
+      "queuing": "У чергу..."
     },
     "artists": {
       "title": "Бібліотека виконавців",

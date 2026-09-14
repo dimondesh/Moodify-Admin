@@ -30,7 +30,7 @@ const AddAlbumFromSpotifyDialog = () => {
   const [spotifyAlbumUrl, setSpotifyAlbumUrl] = useState("");
   const [albumAudioZip, setAlbumAudioZip] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { fetchAlbums } = useMusicStore();
+  const { fetchPaginatedAlbums, albumsPage } = useMusicStore();
 
   const handleZipFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,10 +61,10 @@ const AddAlbumFromSpotifyDialog = () => {
 
       resetForm();
       setDialogOpen(false);
-      toast.success("Album successfully added from Spotify!", {
+      toast.success(t("admin.albums.queuedToast"), {
         id: UPLOAD_TOAST_ID,
       });
-      fetchAlbums();
+      fetchPaginatedAlbums(albumsPage || 1, 50);
     } catch (error: unknown) {
       console.error("Error uploading album from Spotify:", error);
       toast.error(
@@ -175,7 +175,7 @@ const AddAlbumFromSpotifyDialog = () => {
                 <span>
                   {albumAudioZip && uploadProgress < 100
                     ? `${uploadProgress}%`
-                    : "Processing..."}
+                    : t("admin.albums.queuing")}
                 </span>
               </div>
             ) : (

@@ -66,7 +66,7 @@ interface MusicStore {
   fetchArtistAppearsOn: (artistId: string) => Promise<void>;
 }
 
-export const useMusicStore = create<MusicStore>((set) => ({
+export const useMusicStore = create<MusicStore>((set, get) => ({
   albums: [],
   songs: [],
   artists: [],
@@ -157,7 +157,8 @@ export const useMusicStore = create<MusicStore>((set) => ({
     }
   },
   fetchPaginatedAlbums: async (page = 1, limit = 50) => {
-    set({ isLoading: true, error: null });
+    const quiet = get().paginatedAlbums.length > 0;
+    if (!quiet) set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/admin/albums/paginated", {
         params: { page, limit },
@@ -225,6 +226,9 @@ export const useMusicStore = create<MusicStore>((set) => ({
       await axiosInstance.delete(`/admin/albums/${id}`);
       set((state) => ({
         albums: state.albums.filter((album) => album._id !== id),
+        paginatedAlbums: state.paginatedAlbums.filter(
+          (album) => album._id !== id,
+        ),
         songs: state.songs.map((song) =>
           song.albumId === id ? { ...song, albumId: null } : song
         ),

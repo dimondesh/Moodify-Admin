@@ -84,6 +84,13 @@ export interface GeneratedPlaylist {
   addedAt?: string;
 }
 
+export interface AlbumUploadProgress {
+  phase: "queued" | "preparing" | "downloading" | "ingesting";
+  tracksDone: number;
+  tracksTotal: number;
+  percent: number;
+}
+
 export interface Album {
   _id: string;
   title: string;
@@ -92,6 +99,9 @@ export interface Album {
   releaseYear: number;
   songs: Song[];
   type: string;
+  status?: "queued" | "completed";
+  upload?: AlbumUploadProgress | null;
+  ingestJobId?: string | null;
   createdAt: string;
   updatedAt: string;
   addedAt?: string;
