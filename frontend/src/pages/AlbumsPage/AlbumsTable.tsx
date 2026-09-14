@@ -1,5 +1,11 @@
-import { Calendar, Music, Trash2, X } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  Calendar,
+  Clock,
+  Music,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Table,
@@ -9,8 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
+import {
+  CircularProgress,
+  CircularSpinner,
+} from "../../components/ui/circular-progress";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,53 +40,11 @@ import {
   cancelAlbumUpload,
   getApiErrorMessage,
 } from "../../lib/albumIngest";
-import { cn } from "@/lib/utils";
 
 const QUEUE_POLL_MS = 2500;
 
-const statusBadgeStyles = {
-  completed:
-    "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/15",
-  queued:
-    "border-zinc-500/30 bg-zinc-500/10 text-zinc-400 hover:bg-zinc-500/15",
-  preparing:
-    "border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/15",
-  progress:
-    "relative overflow-hidden border-amber-500/30 bg-amber-500/10 text-amber-400 hover:bg-amber-500/15",
-} as const;
-
-/** Same size as other status badges; progress is a fill inside the pill. */
-function ProgressPill({
-  percent,
-  children,
-}: {
-  percent: number;
-  children: ReactNode;
-}) {
-  const clamped = Math.min(100, Math.max(0, percent));
-  return (
-    <Badge variant="outline" className={statusBadgeStyles.progress}>
-      <span
-        aria-hidden
-        className="absolute inset-y-0 left-0 bg-amber-500/25 transition-[width] duration-300"
-        style={{ width: `${clamped}%` }}
-      />
-      <span className="relative z-10">{children}</span>
-    </Badge>
-  );
-}
-
-function AlbumUploadStatusCell({ album }: { album: Album }) {
+function AlbumUploadActionStatus({ album }: { album: Album }) {
   const { t } = useTranslation();
-
-  if (album.status !== "queued") {
-    return (
-      <Badge variant="outline" className={statusBadgeStyles.completed}>
-        {t("admin.albums.statusCompleted")}
-      </Badge>
-    );
-  }
-
   const phase = album.upload?.phase || "queued";
   const done = album.upload?.tracksDone ?? 0;
   const total = album.upload?.tracksTotal ?? 0;
@@ -85,29 +52,40 @@ function AlbumUploadStatusCell({ album }: { album: Album }) {
 
   if (phase === "queued") {
     return (
-      <Badge variant="outline" className={statusBadgeStyles.queued}>
-        {t("admin.albums.statusQueued")}
-      </Badge>
+      <span
+        className="inline-flex h-8 w-8 items-center justify-center text-zinc-400"
+        title={t("admin.albums.statusQueued")}
+      >
+        <Clock className="h-4 w-4" />
+      </span>
     );
   }
 
-  if (phase === "preparing") {
+  if (phase !== "ingesting") {
+    const title =
+      phase === "preparing"
+        ? t("admin.albums.statusPreparing")
+        : t("admin.albums.statusDownloading", { percent: percent || 0 });
     return (
-      <Badge variant="outline" className={statusBadgeStyles.preparing}>
-        {t("admin.albums.statusPreparing")}
-      </Badge>
+      <span
+        className="inline-flex h-8 w-8 items-center justify-center"
+        title={title}
+      >
+        <CircularSpinner />
+      </span>
     );
   }
 
   const displayPercent =
-    phase === "ingesting" && total > 0
-      ? Math.round((done / total) * 100)
-      : percent;
+    total > 0 ? Math.round((done / total) * 100) : percent;
 
   return (
-    <ProgressPill percent={displayPercent}>
-      {t("admin.albums.statusDownloading", { percent: displayPercent })}
-    </ProgressPill>
+    <span
+      className="inline-flex h-8 w-8 items-center justify-center"
+      title={t("admin.albums.statusDownloading", { percent: displayPercent })}
+    >
+      <CircularProgress percent={displayPercent} />
+    </span>
   );
 }
 
@@ -190,106 +168,102 @@ const AlbumsTable = () => {
 
   return (
     <div className="bg-[#1a1a1a] rounded-lg border border-[#2a2a2a] overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-[#2a2a2a] hover:bg-[#2a2a2a]">
-            <TableHead className="w-[50px] text-gray-300"></TableHead>
-            <TableHead className="text-gray-300">
-              {t("admin.albums.tableTitle")}
-            </TableHead>
-            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
-              {t("admin.albums.tableArtists")}
-            </TableHead>
-            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
-              {t("admin.albums.tableReleaseYear")}
-            </TableHead>
-            <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
-              {t("admin.albums.tableSongs")}
-            </TableHead>
-            <TableHead className="text-gray-300">
-              {t("admin.albums.tableStatus")}
-            </TableHead>
-            <TableHead className="text-right text-gray-300">
-              {t("admin.albums.tableActions")}
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedAlbums.map((album) => (
-            <TableRow
-              key={album._id}
-              className="group hover:bg-[#2a2a2a] border-[#2a2a2a]"
-            >
-              <TableCell>
-                <img
-                  src={album.imageUrl}
-                  alt={album.title}
-                  className="h-10 w-10 rounded object-cover min-w-10"
-                />
-              </TableCell>
-              <TableCell className="font-medium text-white max-w-40 sm:max-w-0 truncate">
-                {album.title}
-              </TableCell>
-              <TableCell
-                className={`text-gray-400 truncate ${isMobile ? "hidden" : ""}`}
-              >
-                {getArtistNames(album.artist)}
-              </TableCell>
-              <TableCell
-                className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
-              >
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  {album.releaseYear}
-                </span>
-              </TableCell>
-              <TableCell className={` ${isMobile ? "hidden" : ""}`}>
-                <span className="inline-flex items-center gap-1 text-gray-400">
-                  <Music className="h-4 w-4" />
-                  {album.songs.length}{" "}
-                  {album.songs.length === 1
-                    ? t("sidebar.subtitle.song")
-                    : t("sidebar.subtitle.songs")}
-                </span>
-              </TableCell>
-              <TableCell>
-                <AlbumUploadStatusCell album={album} />
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex gap-2 justify-end">
-                  {album.status === "queued" ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setAlbumToCancel(album)}
-                      disabled={cancellingId === album._id}
-                      className={cn(
-                        "opacity-0 transition-opacity group-hover:opacity-100",
-                        "text-red-400 hover:text-red-300 hover:bg-red-400/10 disabled:opacity-40",
-                      )}
-                      title={t("admin.albums.cancelUpload")}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  ) : (
-                    <>
-                      <EditAlbumDialog album={album} />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteAlbum(album._id)}
-                        className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </TableCell>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="border-[#2a2a2a] hover:bg-[#2a2a2a]">
+              <TableHead className="w-[50px] text-gray-300"></TableHead>
+              <TableHead className="text-gray-300">
+                {t("admin.albums.tableTitle")}
+              </TableHead>
+              <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
+                {t("admin.albums.tableArtists")}
+              </TableHead>
+              <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
+                {t("admin.albums.tableReleaseYear")}
+              </TableHead>
+              <TableHead className={`text-gray-300 ${isMobile ? "hidden" : ""}`}>
+                {t("admin.albums.tableSongs")}
+              </TableHead>
+              <TableHead className="text-right text-gray-300">
+                {t("admin.albums.tableActions")}
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {paginatedAlbums.map((album) => (
+              <TableRow
+                key={album._id}
+                className="hover:bg-[#2a2a2a] border-[#2a2a2a]"
+              >
+                <TableCell>
+                  <img
+                    src={album.imageUrl}
+                    alt={album.title}
+                    className="h-10 w-10 rounded object-cover min-w-10"
+                  />
+                </TableCell>
+                <TableCell className="font-medium text-white max-w-[40vw] sm:max-w-0 truncate">
+                  {album.title}
+                </TableCell>
+                <TableCell
+                  className={`text-gray-400 truncate ${isMobile ? "hidden" : ""}`}
+                >
+                  {getArtistNames(album.artist)}
+                </TableCell>
+                <TableCell
+                  className={`text-gray-400 ${isMobile ? "hidden" : ""}`}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    {album.releaseYear}
+                  </span>
+                </TableCell>
+                <TableCell className={isMobile ? "hidden" : undefined}>
+                  <span className="inline-flex items-center gap-1 text-gray-400">
+                    <Music className="h-4 w-4" />
+                    {album.songs.length}{" "}
+                    {album.songs.length === 1
+                      ? t("sidebar.subtitle.song")
+                      : t("sidebar.subtitle.songs")}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex gap-1 items-center justify-end">
+                    {album.status === "queued" ? (
+                      <>
+                        <AlbumUploadActionStatus album={album} />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setAlbumToCancel(album)}
+                          disabled={cancellingId === album._id}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-400/10 disabled:opacity-40"
+                          title={t("admin.albums.cancelUpload")}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <EditAlbumDialog album={album} />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteAlbum(album._id)}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
       <PaginationControls
         currentPage={albumsPage}
         totalPages={albumsTotalPages}
