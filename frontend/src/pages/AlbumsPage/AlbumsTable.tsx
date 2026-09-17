@@ -96,8 +96,6 @@ const AlbumsTable = () => {
     paginatedAlbums,
     deleteAlbum,
     fetchPaginatedAlbums,
-    artists,
-    fetchArtists,
     albumsPage,
     albumsTotalPages,
   } = useMusicStore();
@@ -107,8 +105,7 @@ const AlbumsTable = () => {
 
   useEffect(() => {
     fetchPaginatedAlbums(currentPage, 50);
-    fetchArtists();
-  }, [fetchPaginatedAlbums, fetchArtists, currentPage]);
+  }, [fetchPaginatedAlbums, currentPage]);
 
   const hasQueued = paginatedAlbums.some((a) => a.status === "queued");
 
@@ -143,20 +140,12 @@ const AlbumsTable = () => {
   };
 
   const getArtistNames = (artistsData: string[] | Artist[] | undefined) => {
-    if (
-      !artistsData ||
-      artistsData.length === 0 ||
-      !artists ||
-      artists.length === 0
-    )
-      return "N/A";
+    if (!artistsData || artistsData.length === 0) return "N/A";
 
     const names = artistsData
       .map((item) => {
-        if (typeof item === "string") {
-          const artist = artists.find((a) => a._id === item);
-          return artist ? artist.name : null;
-        } else if (item && typeof item === "object" && "name" in item) {
+        if (typeof item === "string") return null;
+        if (item && typeof item === "object" && "name" in item) {
           return (item as Artist).name;
         }
         return null;
@@ -222,8 +211,8 @@ const AlbumsTable = () => {
                 <TableCell className={isMobile ? "hidden" : undefined}>
                   <span className="inline-flex items-center gap-1 text-gray-400">
                     <Music className="h-4 w-4" />
-                    {album.songs.length}{" "}
-                    {album.songs.length === 1
+                    {album.songCount ?? album.songs?.length ?? 0}{" "}
+                    {(album.songCount ?? album.songs?.length ?? 0) === 1
                       ? t("sidebar.subtitle.song")
                       : t("sidebar.subtitle.songs")}
                   </span>

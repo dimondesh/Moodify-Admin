@@ -26,8 +26,6 @@ const SongsTable = memo(() => {
     isLoading,
     error,
     deleteSong,
-    artists,
-    fetchArtists,
     fetchPaginatedSongs,
     songsPage,
     songsTotalPages,
@@ -35,9 +33,8 @@ const SongsTable = memo(() => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchArtists();
     fetchPaginatedSongs(currentPage, 50);
-  }, [fetchArtists, fetchPaginatedSongs, currentPage]);
+  }, [fetchPaginatedSongs, currentPage]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= songsTotalPages) {
@@ -46,20 +43,12 @@ const SongsTable = memo(() => {
   };
 
   const getArtistNames = (artistsData: string[] | Artist[] | undefined) => {
-    if (
-      !artistsData ||
-      artistsData.length === 0 ||
-      !artists ||
-      artists.length === 0
-    )
-      return "N/A";
+    if (!artistsData || artistsData.length === 0) return "N/A";
 
     const names = artistsData
       .map((item: string | Artist) => {
-        if (typeof item === "string") {
-          const artist = artists.find((a) => a._id === item);
-          return artist ? artist.name : null;
-        } else if (item && typeof item === "object" && "name" in item) {
+        if (typeof item === "string") return null;
+        if (item && typeof item === "object" && "name" in item) {
           return (item as Artist).name;
         }
         return null;

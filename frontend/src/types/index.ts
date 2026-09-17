@@ -98,6 +98,8 @@ export interface Album {
   imageUrl: string;
   releaseYear: number;
   songs: Song[];
+  /** Present on admin paginated list (avoids shipping full track docs). */
+  songCount?: number;
   type: string;
   status?: "queued" | "completed";
   upload?: AlbumUploadProgress | null;
