@@ -93,9 +93,12 @@ const EmbeddingsMapPage = () => {
   const { t } = useTranslation();
   const [entity, setEntity] = useState<MapEntity>("tracks");
   const [points, setPoints] = useState<MapPoint[]>([]);
-  const [meta, setMeta] = useState<{ count: number; dimensions: number } | null>(
-    null,
-  );
+  const [meta, setMeta] = useState<{
+    count: number;
+    dimensions: number;
+    method?: string;
+    updatedAt?: string | null;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hover, setHover] = useState<{
@@ -261,6 +264,11 @@ const EmbeddingsMapPage = () => {
                   dim: meta.dimensions,
                 })}`
               : null}
+            {meta?.updatedAt
+              ? ` · ${t("admin.embeddingsMap.updatedAt", {
+                  date: new Date(meta.updatedAt).toLocaleString(),
+                })}`
+              : null}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -299,7 +307,7 @@ const EmbeddingsMapPage = () => {
         {loading ? (
           <div className="flex h-full items-center justify-center gap-2 text-gray-400">
             <Loader2 className="size-5 animate-spin" />
-            {t("admin.embeddingsMap.computing")}
+            {t("admin.embeddingsMap.loading")}
           </div>
         ) : error ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-gray-400">

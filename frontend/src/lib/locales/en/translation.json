@@ -727,7 +727,7 @@
     },
     "embeddingsMap": {
       "title": "Embeddings map",
-      "description": "PCA → t-SNE projection of embeddings. Tracks are colored by genre.",
+      "description": "Cached PCA → t-SNE projection of embeddings (nightly cron via sklearn). Tracks are colored by genre.",
       "meta": "{{count}} items · {{dim}}D",
       "entity": {
         "tracks": "Tracks",
@@ -741,7 +741,7 @@
       "colorByType": "Color by type",
       "colorByArtist": "Color by artist",
       "colorBySource": "Color by source",
-      "computing": "Computing projection…",
+      "computing": "Loading map…",
       "empty": "No items with embeddings found.",
       "loadError": "Failed to load embedding map.",
       "retry": "Retry",
@@ -753,7 +753,9 @@
       "source": "Source",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
-      "resetView": "Reset"
+      "resetView": "Reset",
+      "loading": "Loading map…",
+      "updatedAt": "Updated {{date}}"
     },
     "tests": {
       "title": "Algorithm Testing",
